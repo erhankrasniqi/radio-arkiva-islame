@@ -1,11 +1,13 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:hive/hive.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class YoutubeService {
-  static String get apiKey => dotenv.env['API_KEY'] ?? 'NO_API_KEY';
+  static String get apiKey =>
+      Platform.environment['API_KEY'] ?? dotenv.env['API_KEY'] ?? 'NO_API_KEY';
   static const String channelId = 'UC2dFt_PrCZxw5oFxtGHOO8g';
   static const String cacheBox = 'youtube_cache';
 

@@ -28,10 +28,14 @@ class RadioService {
 
   Stream<String> get titleStream => _titleStreamController.stream;
 
-  // ✅ Load stream and current title URLs from environment variables
-  final String streamUrl = dotenv.env['STREAM'] ?? 'http://default-stream-url';
+  final String streamUrl =
+      Platform.environment['STREAM'] ??
+      dotenv.env['STREAM'] ??
+      'http://default-stream-url';
   final String currentTitleUrl =
-      dotenv.env['CURRENT_TITLE'] ?? 'http://default-title-url';
+      Platform.environment['CURRENT_TITLE'] ??
+      dotenv.env['CURRENT_TITLE'] ??
+      'http://default-title-url';
 
   void _startTitleUpdateTimer() {
     Timer.periodic(const Duration(seconds: 10), (timer) {
