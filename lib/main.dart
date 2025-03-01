@@ -34,7 +34,11 @@ Future<void> main() async {
     androidShowNotificationBadge: false,
     preloadArtwork: true,
   );
-  await dotenv.load(fileName: "stuff.env");
+  try {
+    await dotenv.load(fileName: "stuff.env");
+  } catch (e) {
+    print("⚠️ Warning: .env file not found. Using fallback values.");
+  }
   runApp(
     MultiProvider(
       providers: [
