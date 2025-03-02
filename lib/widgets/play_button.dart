@@ -19,6 +19,8 @@ class PlayButtonWidgetState extends State<PlayButtonWidget> {
 
   // Flag to track if playback has started at least once.
   bool _hasStartedPlaying = false;
+  // Flag to indicate that a play request is in progress.
+  bool _isAttemptingPlay = false;
 
   @override
   void initState() {
@@ -34,17 +36,16 @@ class PlayButtonWidgetState extends State<PlayButtonWidget> {
           playerState = PlayerState.loading;
         } else if (state.processingState == ProcessingState.ready) {
           if (state.playing) {
-            // Mark that we have started playback.
             _hasStartedPlaying = true;
+            _isAttemptingPlay = false;
             playerState = PlayerState.playing;
           } else {
-            // When paused, if we haven't started playing before, keep it loading.
+            // If a play request is still in progress, remain in loading state.
             // Otherwise, show the play icon.
             playerState =
-                _hasStartedPlaying ? PlayerState.stopped : PlayerState.loading;
+                _isAttemptingPlay ? PlayerState.loading : PlayerState.stopped;
           }
         } else if (state.processingState == ProcessingState.completed) {
-          // When completed, show a replay (or play) icon.
           playerState = PlayerState.stopped;
         } else {
           playerState = PlayerState.stopped;
@@ -69,6 +70,11 @@ class PlayButtonWidgetState extends State<PlayButtonWidget> {
           if (playerState == PlayerState.playing) {
             await radioService.stop();
           } else {
+            // Immediately mark that we're attempting to play.
+            setState(() {
+              _isAttemptingPlay = true;
+              playerState = PlayerState.loading;
+            });
             await radioService.play();
           }
         },
