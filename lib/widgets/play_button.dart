@@ -17,6 +17,9 @@ class PlayButtonWidgetState extends State<PlayButtonWidget> {
   PlayerState playerState = PlayerState.idle;
   StreamSubscription? _playerStateSubscription;
 
+  // Flag to track if playback has started at least once.
+  bool _hasStartedPlaying = false;
+
   @override
   void initState() {
     super.initState();
@@ -27,9 +30,22 @@ class PlayButtonWidgetState extends State<PlayButtonWidget> {
       setState(() {
         if (state.processingState == ProcessingState.loading ||
             state.processingState == ProcessingState.buffering) {
+          // Always show spinner if loading or buffering.
           playerState = PlayerState.loading;
-        } else if (state.playing) {
-          playerState = PlayerState.playing;
+        } else if (state.processingState == ProcessingState.ready) {
+          if (state.playing) {
+            // Mark that we have started playback.
+            _hasStartedPlaying = true;
+            playerState = PlayerState.playing;
+          } else {
+            // When paused, if we haven't started playing before, keep it loading.
+            // Otherwise, show the play icon.
+            playerState =
+                _hasStartedPlaying ? PlayerState.stopped : PlayerState.loading;
+          }
+        } else if (state.processingState == ProcessingState.completed) {
+          // When completed, show a replay (or play) icon.
+          playerState = PlayerState.stopped;
         } else {
           playerState = PlayerState.stopped;
         }
@@ -57,16 +73,14 @@ class PlayButtonWidgetState extends State<PlayButtonWidget> {
           }
         },
         icon: AnimatedSwitcher(
-          duration: Duration(milliseconds: 150), // Smooth transition
+          duration: const Duration(milliseconds: 150), // Smooth transition
           transitionBuilder:
               (widget, animation) =>
                   ScaleTransition(scale: animation, child: widget),
           child:
               playerState == PlayerState.loading
                   ? SizedBox(
-                    key: ValueKey(
-                      "loading",
-                    ), // Helps AnimatedSwitcher track state changes
+                    key: const ValueKey("loading"),
                     width: 32.0,
                     height: 32.0,
                     child: CircularProgressIndicator(
@@ -75,9 +89,7 @@ class PlayButtonWidgetState extends State<PlayButtonWidget> {
                     ),
                   )
                   : Icon(
-                    key: ValueKey(
-                      playerState,
-                    ), // Ensures the animation works properly
+                    key: ValueKey(playerState),
                     playerState == PlayerState.playing
                         ? Icons.pause
                         : Icons.play_arrow,
