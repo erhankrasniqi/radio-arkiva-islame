@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:just_audio/just_audio.dart';
+import 'package:provider/provider.dart';
 import 'package:radio_arkiva_islame/services/radio_service.dart';
 
 enum PlayerState { idle, loading, playing, stopped }
@@ -13,17 +14,22 @@ class PlayButtonWidget extends StatefulWidget {
 }
 
 class PlayButtonWidgetState extends State<PlayButtonWidget> {
-  final RadioService radioService = RadioService();
+  late RadioService radioService;
   PlayerState playerState = PlayerState.idle;
   StreamSubscription? _playerStateSubscription;
 
   @override
-  void initState() {
-    super.initState();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    radioService = Provider.of<RadioService>(context, listen: false);
+
+    // Listen to the player state stream
+    _playerStateSubscription
+        ?.cancel(); // Cancel any existing subscription to avoid leaks
     _playerStateSubscription = radioService.player.playerStateStream.listen((
       state,
     ) {
-      if (!mounted) return; // Prevent setState() on disposed widget
+      if (!mounted) return;
       setState(() {
         if (state.processingState == ProcessingState.loading ||
             state.processingState == ProcessingState.buffering) {
@@ -39,8 +45,7 @@ class PlayButtonWidgetState extends State<PlayButtonWidget> {
 
   @override
   void dispose() {
-    _playerStateSubscription
-        ?.cancel(); // Cancel stream subscription to prevent errors
+    _playerStateSubscription?.cancel();
     super.dispose();
   }
 
@@ -57,27 +62,20 @@ class PlayButtonWidgetState extends State<PlayButtonWidget> {
           }
         },
         icon: AnimatedSwitcher(
-          duration: Duration(milliseconds: 150), // Smooth transition
+          duration: const Duration(milliseconds: 150),
           transitionBuilder:
               (widget, animation) =>
                   ScaleTransition(scale: animation, child: widget),
           child:
               playerState == PlayerState.loading
-                  ? SizedBox(
-                    key: ValueKey(
-                      "loading",
-                    ), // Helps AnimatedSwitcher track state changes
+                  ? const SizedBox(
+                    key: ValueKey("loading"),
                     width: 32.0,
                     height: 32.0,
-                    child: CircularProgressIndicator(
-                      color: Theme.of(context).colorScheme.onPrimary,
-                      strokeWidth: 3,
-                    ),
+                    child: CircularProgressIndicator(strokeWidth: 3),
                   )
                   : Icon(
-                    key: ValueKey(
-                      playerState,
-                    ), // Ensures the animation works properly
+                    key: ValueKey(playerState),
                     playerState == PlayerState.playing
                         ? Icons.pause
                         : Icons.play_arrow,

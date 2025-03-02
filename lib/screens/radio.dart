@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:radio_arkiva_islame/services/radio_service.dart';
 import 'package:radio_arkiva_islame/widgets/play_button.dart';
 import 'package:radio_arkiva_islame/widgets/now_playing_text.dart';
 import 'package:radio_arkiva_islame/widgets/volume_slider.dart';
@@ -15,8 +17,21 @@ class RadioScreen extends StatelessWidget {
   }
 }
 
-class RadioPlayerWidget extends StatelessWidget {
+class RadioPlayerWidget extends StatefulWidget {
   const RadioPlayerWidget({super.key});
+
+  @override
+  _RadioPlayerWidgetState createState() => _RadioPlayerWidgetState();
+}
+
+class _RadioPlayerWidgetState extends State<RadioPlayerWidget> {
+  late RadioService radioService;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    radioService = Provider.of<RadioService>(context, listen: false);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +49,7 @@ class RadioPlayerWidget extends StatelessWidget {
               spacing: 4,
               children: [
                 Text(
-                  "Radio Arkiva Islame ",
+                  "Radio Arkiva Islame",
                   style: Theme.of(context).textTheme.headlineSmall!.copyWith(
                     color: Theme.of(context).colorScheme.primary,
                   ),
