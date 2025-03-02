@@ -35,7 +35,7 @@ Future<void> main() async {
     preloadArtwork: true,
   );
   try {
-    await dotenv.load(fileName: "stuff.env");
+    await dotenv.load(fileName: ".env");
   } catch (e) {
     print("⚠️ Warning: .env file not found. Using fallback values.");
   }
