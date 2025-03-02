@@ -2,10 +2,9 @@ import 'dart:convert';
 import 'package:hive/hive.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class YoutubeService {
-  static String get apiKey => dotenv.env['API_KEY'] ?? 'NO_API_KEY';
+  static const String yt = 'AIzaSyDxtzeWdKubvO9Cn6tpS5Ge3zld91JPzzU';
   static const String channelId = 'UC2dFt_PrCZxw5oFxtGHOO8g';
   static const String cacheBox = 'youtube_cache';
 
@@ -48,7 +47,7 @@ class YoutubeService {
 
   Future<List<Map<String, String>>> _fetchVideosFromApi() async {
     final String searchUrl =
-        'https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=$channelId&maxResults=10&order=date&type=video&key=$apiKey';
+        'https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=$channelId&maxResults=10&order=date&type=video&key=$yt';
 
     try {
       final searchResponse = await http.get(Uri.parse(searchUrl));
@@ -92,7 +91,7 @@ class YoutubeService {
     if (videoIds.isEmpty) return [];
 
     final String detailsUrl =
-        'https://www.googleapis.com/youtube/v3/videos?part=contentDetails&id=${videoIds.join(",")}&key=$apiKey';
+        'https://www.googleapis.com/youtube/v3/videos?part=contentDetails&id=${videoIds.join(",")}&key=$yt';
 
     try {
       final detailsResponse = await http.get(Uri.parse(detailsUrl));

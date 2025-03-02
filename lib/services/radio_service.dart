@@ -6,12 +6,10 @@ import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:flutter/services.dart';
 import 'package:audio_service/audio_service.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class RadioService {
   static final RadioService _instance = RadioService._internal();
   factory RadioService() => _instance;
-
   RadioService._internal() {
     _fetchCurrentTitle();
     _startTitleUpdateTimer();
@@ -27,10 +25,6 @@ class RadioService {
   );
 
   Stream<String> get titleStream => _titleStreamController.stream;
-
-  final String streamUrl = dotenv.env['STREAM'] ?? 'http://default-stream-url';
-  final String currentTitleUrl =
-      dotenv.env['CURRENT_TITLE'] ?? 'http://default-title-url';
 
   void _startTitleUpdateTimer() {
     Timer.periodic(const Duration(seconds: 10), (timer) {
@@ -52,18 +46,19 @@ class RadioService {
       );
 
       final audioSource = AudioSource.uri(
-        Uri.parse(streamUrl), // ✅ Use dynamic stream URL
+        Uri.parse('http://65.108.198.245:9638/stream'),
         tag: initialMediaItem,
       );
 
       await player.setAudioSource(audioSource);
       await player.play();
 
+      // ✅ Listen for title changes and update metadata dynamically
       currentTitleNotifier.addListener(() async {
         final updatedMediaItem = MediaItem(
           id: '1',
           album: "Radio Arkiva Islame",
-          title: currentTitleNotifier.value,
+          title: currentTitleNotifier.value, // Updated title
           artUri: localArtUri,
         );
 
@@ -71,7 +66,7 @@ class RadioService {
           audioSource,
           initialPosition: player.position,
         );
-        await player.setLoopMode(LoopMode.one);
+        await player.setLoopMode(LoopMode.one); // Keep playing
 
         BaseAudioHandler().updateMediaItem(updatedMediaItem);
       });
@@ -87,8 +82,8 @@ class RadioService {
   Future<void> _fetchCurrentTitle() async {
     try {
       final response = await http.get(
-        Uri.parse(currentTitleUrl),
-      ); // ✅ Use dynamic title URL
+        Uri.parse("http://65.108.198.245:9638/currentsong"),
+      );
 
       if (response.statusCode == 200) {
         String newTitle = response.body.trim();
