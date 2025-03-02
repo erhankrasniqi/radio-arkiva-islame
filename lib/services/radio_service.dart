@@ -11,6 +11,7 @@ class RadioService {
   static final RadioService _instance = RadioService._internal();
   factory RadioService() => _instance;
   RadioService._internal() {
+    // Start fetching title updates on creation.
     _fetchCurrentTitle();
     _startTitleUpdateTimer();
   }
@@ -19,12 +20,44 @@ class RadioService {
   final StreamController<String> _titleStreamController =
       StreamController<String>.broadcast();
   String _lastFetchedTitle = '';
-
   final ValueNotifier<String> currentTitleNotifier = ValueNotifier(
     "Loading...",
   );
 
+  // Persistent media item and audio source.
+  MediaItem? _mediaItem;
+  AudioSource? _audioSource;
+
   Stream<String> get titleStream => _titleStreamController.stream;
+
+  /// Initializes the media item and audio source.
+  Future<void> _initializeMedia() async {
+    final localArtUri = await getLocalArtUri();
+    _mediaItem = MediaItem(
+      id: '1',
+      album: "Radio Arkiva Islame",
+      title: currentTitleNotifier.value,
+      artUri: localArtUri,
+    );
+    _audioSource = AudioSource.uri(
+      Uri.parse('http://65.108.198.245:9638/stream'),
+      tag: _mediaItem,
+    );
+
+    // Register the metadata update listener only once.
+    currentTitleNotifier.addListener(_updateMetadata);
+  }
+
+  /// Updates the media item metadata when the title changes.
+  void _updateMetadata() async {
+    if (_mediaItem == null) return;
+    final updatedMediaItem = _mediaItem!.copyWith(
+      title: currentTitleNotifier.value,
+    );
+    _mediaItem = updatedMediaItem;
+    // Update the audio service metadata.
+    BaseAudioHandler().updateMediaItem(updatedMediaItem);
+  }
 
   void _startTitleUpdateTimer() {
     Timer.periodic(const Duration(seconds: 10), (timer) {
@@ -36,40 +69,16 @@ class RadioService {
     try {
       if (player.playing) return;
 
-      final localArtUri = await getLocalArtUri();
+      // Initialize media only once.
+      if (_audioSource == null) {
+        await _initializeMedia();
+      }
 
-      final initialMediaItem = MediaItem(
-        id: '1',
-        album: "Radio Arkiva Islame",
-        title: currentTitleNotifier.value,
-        artUri: localArtUri,
-      );
-
-      final audioSource = AudioSource.uri(
-        Uri.parse('http://65.108.198.245:9638/stream'),
-        tag: initialMediaItem,
-      );
-
-      await player.setAudioSource(audioSource);
+      await player.setAudioSource(_audioSource!);
       await player.play();
 
-      // ✅ Listen for title changes and update metadata dynamically
-      currentTitleNotifier.addListener(() async {
-        final updatedMediaItem = MediaItem(
-          id: '1',
-          album: "Radio Arkiva Islame",
-          title: currentTitleNotifier.value, // Updated title
-          artUri: localArtUri,
-        );
-
-        await player.setAudioSource(
-          audioSource,
-          initialPosition: player.position,
-        );
-        await player.setLoopMode(LoopMode.one); // Keep playing
-
-        BaseAudioHandler().updateMediaItem(updatedMediaItem);
-      });
+      // Optionally set loop mode.
+      await player.setLoopMode(LoopMode.one);
     } catch (e) {
       print("Error playing stream: $e");
     }
@@ -92,35 +101,33 @@ class RadioService {
           _lastFetchedTitle = newTitle;
           _titleStreamController.add(newTitle);
 
-          // ✅ Clean the title
+          // Clean the title.
           String formattedTitle =
               newTitle
-                  .replaceAll(
-                    RegExp(r'\s*\[.*?\]$'),
-                    '',
-                  ) // Remove [xyz] at the end
+                  .replaceAll(RegExp(r'\s*\[.*?\]$'), '')
                   .replaceAll(
                     RegExp(r'^\s*unknown\s*-?\s*', caseSensitive: false),
                     '',
-                  ) // Remove "Unknown" + dash
+                  )
                   .trim();
 
           if (formattedTitle.isEmpty) {
             formattedTitle = "Unknown Title";
           }
 
-          // ✅ Update ValueNotifier
+          // Update the ValueNotifier which in turn updates metadata.
           currentTitleNotifier.value = formattedTitle;
         }
       }
     } catch (e) {
-      print("Error fetching Title: $e");
+      print("Error fetching title: $e");
     }
   }
 
   void dispose() {
     _titleStreamController.close();
     currentTitleNotifier.dispose();
+    player.dispose();
   }
 
   Future<Uri> getLocalArtUri() async {
