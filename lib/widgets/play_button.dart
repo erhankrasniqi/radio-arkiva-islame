@@ -17,9 +17,6 @@ class PlayButtonWidgetState extends State<PlayButtonWidget> {
   PlayerState playerState = PlayerState.idle;
   StreamSubscription? _playerStateSubscription;
 
-  // Flag to track if playback has started at least once.
-  bool _hasStartedPlaying = false;
-  // Flag to indicate that a play request is in progress.
   bool _isAttemptingPlay = false;
 
   @override
@@ -28,20 +25,16 @@ class PlayButtonWidgetState extends State<PlayButtonWidget> {
     _playerStateSubscription = radioService.player.playerStateStream.listen((
       state,
     ) {
-      if (!mounted) return; // Prevent setState() on disposed widget
+      if (!mounted) return;
       setState(() {
         if (state.processingState == ProcessingState.loading ||
             state.processingState == ProcessingState.buffering) {
-          // Always show spinner if loading or buffering.
           playerState = PlayerState.loading;
         } else if (state.processingState == ProcessingState.ready) {
           if (state.playing) {
-            _hasStartedPlaying = true;
             _isAttemptingPlay = false;
             playerState = PlayerState.playing;
           } else {
-            // If a play request is still in progress, remain in loading state.
-            // Otherwise, show the play icon.
             playerState =
                 _isAttemptingPlay ? PlayerState.loading : PlayerState.stopped;
           }
@@ -56,8 +49,7 @@ class PlayButtonWidgetState extends State<PlayButtonWidget> {
 
   @override
   void dispose() {
-    _playerStateSubscription
-        ?.cancel(); // Cancel stream subscription to prevent errors
+    _playerStateSubscription?.cancel();
     super.dispose();
   }
 
@@ -70,7 +62,6 @@ class PlayButtonWidgetState extends State<PlayButtonWidget> {
           if (playerState == PlayerState.playing) {
             await radioService.stop();
           } else {
-            // Immediately mark that we're attempting to play.
             setState(() {
               _isAttemptingPlay = true;
               playerState = PlayerState.loading;
@@ -79,7 +70,7 @@ class PlayButtonWidgetState extends State<PlayButtonWidget> {
           }
         },
         icon: AnimatedSwitcher(
-          duration: const Duration(milliseconds: 150), // Smooth transition
+          duration: const Duration(milliseconds: 150),
           transitionBuilder:
               (widget, animation) =>
                   ScaleTransition(scale: animation, child: widget),
