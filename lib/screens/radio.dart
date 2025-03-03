@@ -1,65 +1,86 @@
 import 'package:flutter/material.dart';
-import 'package:radio_arkiva_islame/widgets/play_button.dart';
-import 'package:radio_arkiva_islame/widgets/now_playing_text.dart';
-import 'package:radio_arkiva_islame/widgets/volume_slider.dart';
+import 'package:flutter_carousel_widget/flutter_carousel_widget.dart';
+import 'package:radio_arkiva_islame/widgets/ad_item.dart';
+import 'package:radio_arkiva_islame/widgets/radio_player.dart';
 
 class RadioScreen extends StatefulWidget {
   const RadioScreen({super.key});
 
   @override
-  _RadioScreenState createState() => _RadioScreenState();
+  RadioScreenState createState() => RadioScreenState();
 }
 
-class _RadioScreenState extends State<RadioScreen>
+class RadioScreenState extends State<RadioScreen>
     with AutomaticKeepAliveClientMixin {
   @override
-  bool get wantKeepAlive => true; // Keeps this widget alive when off-screen
+  bool get wantKeepAlive => true;
 
   @override
   Widget build(BuildContext context) {
-    super.build(
-      context,
-    ); // Important: call super.build when using AutomaticKeepAliveClientMixin
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: SingleChildScrollView(child: const RadioPlayerWidget()),
-    );
-  }
-}
-
-class RadioPlayerWidget extends StatelessWidget {
-  const RadioPlayerWidget({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      color: Theme.of(context).colorScheme.surfaceContainer,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          spacing: 8.0, // Preserved your spacing parameter
-          children: [
-            Image.asset('assets/logo.png', fit: BoxFit.fitWidth),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              spacing: 4, // Preserved your spacing parameter
-              children: [
-                Text(
-                  "Radio Arkiva Islame ",
-                  style: Theme.of(context).textTheme.headlineSmall!.copyWith(
-                    color: Theme.of(context).colorScheme.primary,
+    super.build(context);
+    return SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const RadioPlayerWidget(),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            spacing: 2.0,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(left: 16.0),
+                child: Text(
+                  'Marketing',
+                  style: Theme.of(context).textTheme.labelMedium!.copyWith(
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
                 ),
-                const NowPlayingText(),
-              ],
-            ),
-            Column(
-              spacing: 12.0, // Preserved your spacing parameter
-              children: const [VolumeSliderWidget(), PlayButtonWidget()],
-            ),
-          ],
-        ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(bottom: 32.0),
+                child: ExpandableCarousel(
+                  options: ExpandableCarouselOptions(
+                    slideIndicator: CircularStaticIndicator(
+                      slideIndicatorOptions: SlideIndicatorOptions(
+                        currentIndicatorColor:
+                            Theme.of(context).colorScheme.primary,
+                        indicatorBackgroundColor:
+                            Theme.of(context).colorScheme.secondaryContainer,
+                        indicatorRadius: 3.5,
+                        itemSpacing: 12.0,
+                        enableAnimation: true,
+                      ),
+                    ),
+                    enableInfiniteScroll: true,
+                    padEnds: false,
+                    disableCenter: true,
+                    autoPlay: true,
+                    autoPlayInterval: const Duration(seconds: 6),
+                    autoPlayCurve: Curves.ease,
+                    autoPlayAnimationDuration: Duration(milliseconds: 500),
+                    floatingIndicator: false,
+                    viewportFraction: 0.7,
+                  ),
+                  items:
+                      [1, 2, 3, 4, 5].map((i) {
+                        return Builder(
+                          builder: (BuildContext context) {
+                            return Container(
+                              margin: const EdgeInsets.only(
+                                left: 8.0,
+                                bottom: 16.0,
+                              ),
+                              width: MediaQuery.of(context).size.width,
+                              child: AdItem(),
+                            );
+                          },
+                        );
+                      }).toList(),
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }

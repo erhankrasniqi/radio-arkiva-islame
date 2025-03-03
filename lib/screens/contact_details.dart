@@ -140,7 +140,7 @@ class _ContactDetailsState extends State<ContactDetails> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Na Shkruani')),
+      appBar: AppBar(title: const Text('Na Shkruani'), centerTitle: true),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -164,6 +164,7 @@ class _ContactDetailsState extends State<ContactDetails> {
               Form(
                 key: _formKey,
                 child: Column(
+                  spacing: 8.0,
                   children: [
                     TextFormField(
                       controller: _nameController,
@@ -179,7 +180,6 @@ class _ContactDetailsState extends State<ContactDetails> {
                         });
                       },
                     ),
-                    const SizedBox(height: 8.0),
                     TextFormField(
                       controller: _emailController,
                       decoration: InputDecoration(
@@ -195,7 +195,6 @@ class _ContactDetailsState extends State<ContactDetails> {
                         });
                       },
                     ),
-                    const SizedBox(height: 8.0),
                     TextFormField(
                       controller: _messageController,
                       decoration: InputDecoration(
@@ -211,15 +210,17 @@ class _ContactDetailsState extends State<ContactDetails> {
                         });
                       },
                     ),
-                    const SizedBox(height: 8.0),
                     _isLoading
                         ? const Center(child: CircularProgressIndicator())
-                        : FilledButton(
-                          onPressed:
-                              _isFormValid && !_isSent
-                                  ? _validateAndSubmit
-                                  : null,
-                          child: const Text("Dërgoni mesazhin"),
+                        : SizedBox(
+                          width: double.infinity,
+                          child: FilledButton(
+                            onPressed:
+                                _isFormValid && !_isSent
+                                    ? _validateAndSubmit
+                                    : null,
+                            child: const Text("Dërgoni mesazhin"),
+                          ),
                         ),
                   ],
                 ),

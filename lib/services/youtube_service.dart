@@ -20,7 +20,7 @@ class YoutubeService {
       final difference = now.difference(lastFetchDate).inMinutes;
 
       if (difference < 1440) {
-        // Change 1 to 1440 for daily fetching
+        // 1 - 1 minute, 1440 daily
         final List<dynamic>? cachedData = box.get('cached_videos');
         if (cachedData != null) {
           print(
@@ -42,6 +42,7 @@ class YoutubeService {
       );
     }
     print("[DEBUG] Fetching videos at ${DateTime.now()}");
+    print("$newVideos");
     return newVideos;
   }
 
@@ -101,7 +102,13 @@ class YoutubeService {
 
         for (var video in detailsData['items']) {
           String videoId = video['id'];
-          String duration = formatDuration(video['contentDetails']['duration']);
+          String duration;
+          if (video['contentDetails'].containsKey('duration') &&
+              video['contentDetails']['duration'] != null) {
+            duration = formatDuration(video['contentDetails']['duration']);
+          } else {
+            duration = 'Premiere';
+          }
 
           formattedVideos.add({
             'videoId': videoId,

@@ -5,12 +5,9 @@ class ChannelWidget extends StatelessWidget {
   const ChannelWidget({super.key});
 
   void _launchChannel() async {
-    const channelId =
-        "UCJzlcANj25wt8vh7ZTDEEtg";
-    final youtubeAppUrl =
-        "vnd.youtube://channel/$channelId";
-    final youtubeUrl =
-        "https://www.youtube.com/@arkivaislame1675";
+    const channelId = "UCJzlcANj25wt8vh7ZTDEEtg";
+    final youtubeAppUrl = "vnd.youtube://channel/$channelId";
+    final youtubeUrl = "https://www.youtube.com/@arkivaislame1675";
 
     if (await canLaunchUrl(Uri.parse(youtubeAppUrl))) {
       await launchUrl(Uri.parse(youtubeAppUrl));
@@ -26,13 +23,12 @@ class ChannelWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return ClipRRect(
       borderRadius: BorderRadius.circular(12.0),
-      child: Material(
-        color: Theme.of(context).colorScheme.surfaceContainerHigh,
+      child: Card(
+        color: Theme.of(context).colorScheme.surface,
+        elevation: 2.0,
         child: InkWell(
           onTap: _launchChannel,
-          borderRadius: BorderRadius.circular(
-            12,
-          ),
+          borderRadius: BorderRadius.circular(12),
           child: Padding(
             padding: const EdgeInsets.all(16.0),
             child: Row(
@@ -41,9 +37,7 @@ class ChannelWidget extends StatelessWidget {
                   radius: 36,
                   backgroundImage: AssetImage('assets/logo_square_bg.jpg'),
                 ),
-                const SizedBox(
-                  width: 16,
-                ),
+                const SizedBox(width: 16),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,

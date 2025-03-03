@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:radio_arkiva_islame/theme/theme.dart';
 import 'package:radio_arkiva_islame/providers/theme_provider.dart';
@@ -64,11 +65,8 @@ class AppContent extends StatelessWidget {
           bottom: TabBar(
             tabs: [
               Tab(text: "Radio", icon: Icon(Icons.radio_outlined)),
-              Tab(
-                text: "Youtube",
-                icon: Icon(Icons.youtube_searched_for_outlined),
-              ),
-              Tab(text: "Contact", icon: Icon(Icons.info_outline)),
+              Tab(text: "Youtube", icon: FaIcon(FontAwesomeIcons.youtube)),
+              Tab(text: "Kontakt", icon: Icon(Icons.info_outline)),
             ],
           ),
         ),

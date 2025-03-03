@@ -8,7 +8,7 @@ class SettingsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Settings")),
+      appBar: AppBar(title: const Text("Preferencat"), centerTitle: true),
       body: const OptionPicker(),
     );
   }
@@ -29,7 +29,7 @@ class OptionPicker extends StatelessWidget {
           onChanged: (Options? value) {
             if (value != null) themeProvider.setTheme(value);
           },
-          title: const Text('Automatic'),
+          title: const Text('Automatik'),
         ),
         RadioListTile<Options>(
           value: Options.dark,
@@ -37,7 +37,7 @@ class OptionPicker extends StatelessWidget {
           onChanged: (Options? value) {
             if (value != null) themeProvider.setTheme(value);
           },
-          title: const Text('Dark'),
+          title: const Text('Errët'),
         ),
         RadioListTile<Options>(
           value: Options.light,
@@ -45,7 +45,7 @@ class OptionPicker extends StatelessWidget {
           onChanged: (Options? value) {
             if (value != null) themeProvider.setTheme(value);
           },
-          title: const Text('Light'),
+          title: const Text('Ndritshëm'),
         ),
       ],
     );

@@ -21,7 +21,7 @@ TextTheme createTextTheme(
       fontWeight: FontWeight.w500,
       fontSize: 14,
     ),
-    bodySmall: bodyTextTheme.bodySmall,
+    bodySmall: baseTextTheme.bodySmall!.copyWith(fontSize: 14),
     labelLarge: bodyTextTheme.labelLarge,
     labelMedium: bodyTextTheme.labelMedium,
     labelSmall: bodyTextTheme.labelSmall,

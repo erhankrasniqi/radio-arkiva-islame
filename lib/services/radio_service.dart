@@ -95,9 +95,21 @@ class RadioService {
       );
 
       if (response.statusCode == 200) {
+        // Trim the response.
         String newTitle = response.body.trim();
 
-        if (newTitle.isNotEmpty && newTitle != _lastFetchedTitle) {
+        // If the fetched title is empty, use a default placeholder.
+        if (newTitle.isEmpty) {
+          if (_lastFetchedTitle != "Unknown Title") {
+            _lastFetchedTitle = "Unknown Title";
+            currentTitleNotifier.value = "Unknown Title";
+            _titleStreamController.add("Unknown Title");
+          }
+          return;
+        }
+
+        // Only update if the title has changed.
+        if (newTitle != _lastFetchedTitle) {
           _lastFetchedTitle = newTitle;
           _titleStreamController.add(newTitle);
 
