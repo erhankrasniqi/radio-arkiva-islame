@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:radio_arkiva_islame/constants/constants.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class YoutubeItem extends StatelessWidget {
@@ -18,11 +19,9 @@ class YoutubeItem extends StatelessWidget {
     required this.publishDate,
   });
 
-  // Function to launch YouTube video
   void _launchVideo() async {
     final youtubeUrl = "https://www.youtube.com/watch?v=$videoId";
-    final youtubeAppUrl =
-        "vnd.youtube:$videoId"; // Opens in YouTube app if installed
+    final youtubeAppUrl = "vnd.youtube:$videoId";
 
     if (await canLaunchUrl(Uri.parse(youtubeAppUrl))) {
       await launchUrl(Uri.parse(youtubeAppUrl));
@@ -57,13 +56,10 @@ class YoutubeItem extends StatelessWidget {
                   child: CachedNetworkImage(
                     imageUrl: thumbnailUrl,
                     placeholder:
-                        (context, url) => const Center(
-                          child: CircularProgressIndicator(),
-                        ), // ✅ Show loading indicator
+                        (context, url) =>
+                            const Center(child: CircularProgressIndicator()),
                     errorWidget:
-                        (context, url, error) => Image.asset(
-                          'assets/mosque.png',
-                        ), // ✅ Show fallback image
+                        (context, url, error) => Image.asset(Assets.mosque),
                     fit: BoxFit.cover,
                   ),
                 ),

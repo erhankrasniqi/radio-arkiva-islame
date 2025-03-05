@@ -6,12 +6,14 @@ import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:flutter/services.dart';
 import 'package:audio_service/audio_service.dart';
+import 'package:radio_arkiva_islame/constants/constants.dart';
+import 'package:radio_arkiva_islame/constants/strings.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 
 class RadioService {
   static final RadioService _instance = RadioService._internal();
   factory RadioService() => _instance;
   RadioService._internal() {
-    // Start fetching title updates on creation.
     _fetchCurrentTitle();
     _startTitleUpdateTimer();
   }
@@ -21,41 +23,35 @@ class RadioService {
       StreamController<String>.broadcast();
   String _lastFetchedTitle = '';
   final ValueNotifier<String> currentTitleNotifier = ValueNotifier(
-    "Loading...",
+    Strings.loading,
   );
 
-  // Persistent media item and audio source.
   MediaItem? _mediaItem;
   AudioSource? _audioSource;
 
   Stream<String> get titleStream => _titleStreamController.stream;
 
-  /// Initializes the media item and audio source.
   Future<void> _initializeMedia() async {
     final localArtUri = await getLocalArtUri();
     _mediaItem = MediaItem(
       id: '1',
-      album: "Radio Arkiva Islame",
+      album: Strings.appTitle,
       title: currentTitleNotifier.value,
       artUri: localArtUri,
     );
     _audioSource = AudioSource.uri(
-      Uri.parse('http://65.108.198.245:9638/stream'),
+      Uri.parse(RadioStream.stream),
       tag: _mediaItem,
     );
-
-    // Register the metadata update listener only once.
     currentTitleNotifier.addListener(_updateMetadata);
   }
 
-  /// Updates the media item metadata when the title changes.
   void _updateMetadata() async {
     if (_mediaItem == null) return;
     final updatedMediaItem = _mediaItem!.copyWith(
       title: currentTitleNotifier.value,
     );
     _mediaItem = updatedMediaItem;
-    // Update the audio service metadata.
     BaseAudioHandler().updateMediaItem(updatedMediaItem);
   }
 
@@ -69,51 +65,63 @@ class RadioService {
     try {
       if (player.playing) return;
 
-      // Initialize media only once.
       if (_audioSource == null) {
         await _initializeMedia();
       }
 
-      await player.setAudioSource(_audioSource!);
-      await player.play();
+      final List<ConnectivityResult> connectivityResult =
+          await (Connectivity().checkConnectivity());
+      if (connectivityResult.contains(ConnectivityResult.none)) {
+        print("No internet connection available for playing stream.");
+        await stop();
+        throw Exception("No internet connection available.");
+      }
 
-      // Optionally set loop mode.
-      await player.setLoopMode(LoopMode.one);
+      await player
+          .setAudioSource(_audioSource!)
+          .timeout(const Duration(seconds: 10));
+      await player.play();
     } catch (e) {
       print("Error playing stream: $e");
+      await stop();
+      rethrow;
     }
   }
 
   Future<void> stop() async {
-    await player.pause();
+    await player.stop();
   }
 
   Future<void> _fetchCurrentTitle() async {
     try {
-      final response = await http.get(
-        Uri.parse("http://65.108.198.245:9638/currentsong"),
-      );
+      // Check connectivity before making the network call
+      final List<ConnectivityResult> connectivityResult =
+          await (Connectivity().checkConnectivity());
+      if (connectivityResult.contains(ConnectivityResult.none)) {
+        print("No internet connection available for fetching title.");
+        return;
+      }
+
+      final response = await http
+          .get(Uri.parse(RadioStream.currentTitle))
+          .timeout(const Duration(seconds: 1));
 
       if (response.statusCode == 200) {
-        // Trim the response.
         String newTitle = response.body.trim();
 
-        // If the fetched title is empty, use a default placeholder.
         if (newTitle.isEmpty) {
-          if (_lastFetchedTitle != "Unknown Title") {
-            _lastFetchedTitle = "Unknown Title";
-            currentTitleNotifier.value = "Unknown Title";
-            _titleStreamController.add("Unknown Title");
+          if (_lastFetchedTitle != Strings.unknownTitle) {
+            _lastFetchedTitle = Strings.unknownTitle;
+            currentTitleNotifier.value = Strings.unknownTitle;
+            _titleStreamController.add(Strings.unknownTitle);
           }
           return;
         }
 
-        // Only update if the title has changed.
         if (newTitle != _lastFetchedTitle) {
           _lastFetchedTitle = newTitle;
           _titleStreamController.add(newTitle);
 
-          // Clean the title.
           String formattedTitle =
               newTitle
                   .replaceAll(RegExp(r'\s*\[.*?\]$'), '')
@@ -124,10 +132,9 @@ class RadioService {
                   .trim();
 
           if (formattedTitle.isEmpty) {
-            formattedTitle = "Unknown Title";
+            formattedTitle = Strings.unknownTitle;
           }
 
-          // Update the ValueNotifier which in turn updates metadata.
           currentTitleNotifier.value = formattedTitle;
         }
       }

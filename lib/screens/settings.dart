@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:radio_arkiva_islame/constants/strings.dart';
 import 'package:radio_arkiva_islame/providers/theme_provider.dart';
 
 class SettingsScreen extends StatelessWidget {
@@ -8,7 +9,7 @@ class SettingsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Preferencat"), centerTitle: true),
+      appBar: AppBar(title: const Text(Strings.settings), centerTitle: true),
       body: const OptionPicker(),
     );
   }
@@ -29,7 +30,7 @@ class OptionPicker extends StatelessWidget {
           onChanged: (Options? value) {
             if (value != null) themeProvider.setTheme(value);
           },
-          title: const Text('Automatik'),
+          title: const Text(Strings.automatic),
         ),
         RadioListTile<Options>(
           value: Options.dark,
@@ -37,7 +38,7 @@ class OptionPicker extends StatelessWidget {
           onChanged: (Options? value) {
             if (value != null) themeProvider.setTheme(value);
           },
-          title: const Text('Errët'),
+          title: const Text(Strings.dark),
         ),
         RadioListTile<Options>(
           value: Options.light,
@@ -45,7 +46,7 @@ class OptionPicker extends StatelessWidget {
           onChanged: (Options? value) {
             if (value != null) themeProvider.setTheme(value);
           },
-          title: const Text('Ndritshëm'),
+          title: const Text(Strings.light),
         ),
       ],
     );

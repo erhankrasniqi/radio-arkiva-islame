@@ -15,10 +15,8 @@ class VolumeSliderWidgetState extends State<VolumeSliderWidget> {
   void initState() {
     super.initState();
 
-    // ✅ Ensures the system volume UI is shown
     FlutterVolumeController.updateShowSystemUI(true);
 
-    // ✅ Gets current device volume
     FlutterVolumeController.getVolume().then((volume) {
       if (mounted) {
         setState(() {
@@ -27,7 +25,6 @@ class VolumeSliderWidgetState extends State<VolumeSliderWidget> {
       }
     });
 
-    // ✅ Listen for system volume changes and update state
     FlutterVolumeController.addListener((volume) {
       if (mounted && volume != setVolumeValue) {
         setState(() {
@@ -64,7 +61,6 @@ class VolumeSliderWidgetState extends State<VolumeSliderWidget> {
               });
             },
             onChangeEnd: (double value) {
-              // ✅ Avoid UI blocking: Update volume asynchronously
               WidgetsBinding.instance.addPostFrameCallback((_) {
                 FlutterVolumeController.setVolume(value);
               });

@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:radio_arkiva_islame/constants/constants.dart';
+import 'package:radio_arkiva_islame/constants/strings.dart';
+import 'package:radio_arkiva_islame/theme/text_theme.dart';
 import 'package:radio_arkiva_islame/theme/theme.dart';
 import 'package:radio_arkiva_islame/providers/theme_provider.dart';
-import 'package:radio_arkiva_islame/theme/util.dart';
 import 'package:radio_arkiva_islame/screens/contact.dart';
 import 'package:radio_arkiva_islame/screens/radio.dart';
 import 'package:radio_arkiva_islame/screens/settings.dart';
@@ -15,17 +17,10 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
-
-    // Retrieves the default theme for the platform
-    // TextTheme textTheme = Theme.of(context).textTheme;
-
-    // Use with Google Fonts package to use downloadable fonts
-    TextTheme textTheme = createTextTheme(context, "Roboto", "Roboto");
-
-    MaterialTheme theme = MaterialTheme(textTheme);
+    MaterialTheme theme = MaterialTheme(createTextTheme(context));
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Flutter Demo',
+      title: Strings.appTitle,
       themeMode: themeProvider.themeMode,
       darkTheme: theme.dark(),
       theme: theme.light(),
@@ -47,7 +42,7 @@ class AppContent extends StatelessWidget {
           leading: Padding(
             padding: const EdgeInsets.only(left: 16.0),
             child: SizedBox(
-              child: Image.asset("assets/logo.png", fit: BoxFit.contain),
+              child: Image.asset(Assets.logo, fit: BoxFit.contain),
             ),
           ),
           leadingWidth: 100,
@@ -64,9 +59,12 @@ class AppContent extends StatelessWidget {
           ],
           bottom: TabBar(
             tabs: [
-              Tab(text: "Radio", icon: Icon(Icons.radio_outlined)),
-              Tab(text: "Youtube", icon: FaIcon(FontAwesomeIcons.youtube)),
-              Tab(text: "Kontakt", icon: Icon(Icons.info_outline)),
+              Tab(text: Strings.radio, icon: Icon(Icons.radio_outlined)),
+              Tab(
+                text: Strings.youtube,
+                icon: FaIcon(FontAwesomeIcons.youtube),
+              ),
+              Tab(text: Strings.contact, icon: Icon(Icons.info_outline)),
             ],
           ),
         ),

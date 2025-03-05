@@ -16,8 +16,8 @@ class NowPlayingText extends StatelessWidget {
           style: Theme.of(context).textTheme.titleMedium!.copyWith(
             color: Theme.of(context).colorScheme.onSurfaceVariant,
           ),
-          softWrap: true, // Allows text to wrap to the next line
-          maxLines: null, // Unlimited lines, allowing full text display
+          softWrap: true,
+          maxLines: null,
         );
       },
     );

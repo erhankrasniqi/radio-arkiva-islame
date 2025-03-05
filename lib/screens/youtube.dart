@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:radio_arkiva_islame/constants/strings.dart';
 import 'package:radio_arkiva_islame/providers/youtube_provider.dart';
-import 'package:radio_arkiva_islame/widgets/channel.dart';
+import 'package:radio_arkiva_islame/services/youtube_service.dart';
+import 'package:radio_arkiva_islame/widgets/youtube_channel.dart';
 import 'package:radio_arkiva_islame/widgets/youtube_item.dart';
 
 class YoutubeScreen extends StatelessWidget {
@@ -15,7 +17,20 @@ class YoutubeScreen extends StatelessWidget {
           return const Center(child: CircularProgressIndicator());
         }
         if (youtubeProvider.videos.isEmpty) {
-          return const Center(child: Text("No videos found."));
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              spacing: 4.0,
+              children: [
+                const Text(Strings.noVideos),
+                FilledButton.tonal(
+                  onPressed:
+                      () => context.read<YoutubeProvider>().fetchVideos(),
+                  child: const Text(Strings.tryAgain),
+                ),
+              ],
+            ),
+          );
         }
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,

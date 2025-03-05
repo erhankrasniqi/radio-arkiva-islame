@@ -2,16 +2,18 @@ import 'dart:convert';
 import 'package:hive/hive.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
+import 'package:radio_arkiva_islame/constants/constants.dart';
+import 'package:radio_arkiva_islame/constants/strings.dart';
 
 class YoutubeService {
-  static const String yt = 'AIzaSyDxtzeWdKubvO9Cn6tpS5Ge3zld91JPzzU';
-  static const String channelId = 'UC2dFt_PrCZxw5oFxtGHOO8g';
-  static const String cacheBox = 'youtube_cache';
+  static const String yt = Youtube.yt;
+  static const String channelId = Youtube.channelId;
+  static const String cacheBox = Strings.cacheBox;
 
   Future<List<Map<String, String>>> fetchLatestVideos() async {
     var box = await Hive.openBox(cacheBox);
     final now = DateTime.now();
-    final String? lastFetchDateStr = box.get('last_fetch_date');
+    final String? lastFetchDateStr = box.get(Strings.lastFetchDate);
 
     if (lastFetchDateStr != null) {
       final lastFetchDate = DateFormat(
@@ -21,7 +23,7 @@ class YoutubeService {
 
       if (difference < 1440) {
         // 1 - 1 minute, 1440 daily
-        final List<dynamic>? cachedData = box.get('cached_videos');
+        final List<dynamic>? cachedData = box.get(Strings.cachedVideos);
         if (cachedData != null) {
           print(
             "[CACHE] Returning cached videos (Last fetch: $lastFetchDateStr)",
@@ -35,9 +37,9 @@ class YoutubeService {
 
     final newVideos = await _fetchVideosFromApi();
     if (newVideos.isNotEmpty) {
-      await box.put('cached_videos', newVideos);
+      await box.put(Strings.cachedVideos, newVideos);
       await box.put(
-        'last_fetch_date',
+        Strings.lastFetchDate,
         DateFormat('yyyy-MM-dd HH:mm').format(now),
       );
     }
