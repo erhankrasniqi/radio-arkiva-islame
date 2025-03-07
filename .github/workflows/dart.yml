@@ -24,17 +24,17 @@ jobs:
           fi
           sed -i '' "s/^# platform :ios, '.*'/platform :ios, '13.0'/" ios/Podfile
 
+      - name: Cache CocoaPods
+        uses: actions/cache@v3
+        with:
+          path: ios/Pods
+          key: ${{ runner.os }}-pods-${{ hashFiles('ios/Podfile.lock') }}
+
       - run: pod repo update
         working-directory: ios
 
-      - name: Create .env file
-        run: |
-          echo "API_KEY=${{ secrets.API_KEY }}" >> .env
-          echo "STREAM=${{ secrets.STREAM }}" >> .env
-          echo "CURRENT_TITLE=${{ secrets.CURRENT_TITLE }}" >> .env
-
-      - name: Move .env file to flutter project
-        run: mv .env ios/.env
+      - run: pod install
+        working-directory: ios
 
       - run: flutter build ios --release --no-codesign
 
