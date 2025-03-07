@@ -41,7 +41,7 @@ class AdsCarousel extends StatelessWidget {
               return _buildLoadingWidget();
             }
             return Padding(
-              padding: const EdgeInsets.only(bottom: 16.0),
+              padding: const EdgeInsets.only(bottom: 0.0),
               child: ExpandableCarousel(
                 key: const ValueKey("ads_carousel"),
                 options: ExpandableCarouselOptions(

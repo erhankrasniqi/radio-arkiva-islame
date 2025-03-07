@@ -14,7 +14,7 @@ class FormSpree {
 }
 
 class Assets {
-  static const String logo = 'assets/logo.png';
+  static const String logo = 'assets/arkiva_islame_hq.png';
   static const String logoSquareBg = 'assets/logo_square_bg.jpg';
-  static const String mosque = 'assets/mosque.png';
+  static const String placeholder = 'assets/placeholder.png';
 }

@@ -39,7 +39,8 @@ class AdItem extends StatelessWidget {
                       (context, url) =>
                           const Center(child: CircularProgressIndicator()),
                   errorWidget:
-                      (context, url, error) => Image.asset(Assets.mosque),
+                      (context, url, error) =>
+                          Image.asset(Assets.placeholder, fit: BoxFit.cover),
                   fit: BoxFit.cover,
                 ),
               ),

@@ -48,4 +48,21 @@ class DefaultFirebaseOptions {
         );
     }
   }
+
+  static const FirebaseOptions android = FirebaseOptions(
+    apiKey: 'AIzaSyBjb4C3RlFi2u8G2SESRYE3TNip0liZ5tU',
+    appId: '1:599506240597:android:b97655f8ae6507696300dc',
+    messagingSenderId: '599506240597',
+    projectId: 'arkiva-islame',
+    storageBucket: 'arkiva-islame.firebasestorage.app',
+  );
+
+  static const FirebaseOptions ios = FirebaseOptions(
+    apiKey: 'AIzaSyDHS9uKAOwOgBVdL5emciFSpdujtpY0FwI',
+    appId: '1:599506240597:ios:b5c8103c3ea554d96300dc',
+    messagingSenderId: '599506240597',
+    projectId: 'arkiva-islame',
+    storageBucket: 'arkiva-islame.firebasestorage.app',
+    iosBundleId: 'com.arkivaislame.radioArkivaIslame',
+  );
 }

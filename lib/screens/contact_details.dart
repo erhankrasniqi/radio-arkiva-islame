@@ -146,7 +146,12 @@ class _ContactDetailsState extends State<ContactDetails> {
       appBar: AppBar(title: const Text(Strings.writeUs), centerTitle: true),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: EdgeInsets.only(
+            top: 8.0,
+            right: 16.0,
+            left: 16.0,
+            bottom: MediaQuery.of(context).padding.bottom + 8.0,
+          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [

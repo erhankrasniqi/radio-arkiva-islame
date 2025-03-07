@@ -23,14 +23,25 @@ class ChannelWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
+    return Material(
+      borderRadius: BorderRadius.only(
+        bottomLeft: Radius.circular(12.0),
+        bottomRight: Radius.circular(12.0),
+      ),
       color: Theme.of(context).colorScheme.surfaceContainer,
-      elevation: 0.0,
       child: InkWell(
         onTap: _launchChannel,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.only(
+          bottomLeft: Radius.circular(12.0),
+          bottomRight: Radius.circular(12.0),
+        ),
         child: Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: const EdgeInsets.only(
+            top: 16.0,
+            left: 32.0,
+            right: 32.0,
+            bottom: 16.0,
+          ),
           child: Row(
             children: [
               CircleAvatar(

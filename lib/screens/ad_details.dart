@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:radio_arkiva_islame/constants/constants.dart';
 import 'package:radio_arkiva_islame/constants/strings.dart';
 import 'package:radio_arkiva_islame/data/model.dart';
 import 'package:radio_arkiva_islame/screens/contact.dart';
@@ -28,7 +29,13 @@ class AdDetails extends StatelessWidget {
           spacing: 12.0,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            CachedNetworkImage(imageUrl: ad.image, fit: BoxFit.fitWidth),
+            CachedNetworkImage(
+              imageUrl: ad.image,
+              errorWidget:
+                  (context, url, error) =>
+                      Image.asset(Assets.placeholder, fit: BoxFit.cover),
+              fit: BoxFit.fitWidth,
+            ),
             Padding(
               padding: const EdgeInsets.only(
                 left: 16.0,

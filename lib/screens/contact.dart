@@ -26,18 +26,18 @@ class ContactScreen extends StatelessWidget {
       ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.only(
+          padding: EdgeInsets.only(
             left: 16.0,
             right: 16.0,
             top: 16.0,
-            bottom: 56.0,
+            bottom: MediaQuery.of(context).padding.bottom + 8.0,
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             spacing: 16,
             children: [
               const SectionHeader(
-                title: Strings.appTitle,
+                title: Strings.arkivaIslame,
                 showDescription: true,
               ),
               const SectionHeader(title: Strings.connectWithUs),

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:radio_arkiva_islame/constants/strings.dart';
 import 'package:radio_arkiva_islame/providers/youtube_provider.dart';
-import 'package:radio_arkiva_islame/services/youtube_service.dart';
 import 'package:radio_arkiva_islame/widgets/youtube_channel.dart';
 import 'package:radio_arkiva_islame/widgets/youtube_item.dart';
 
@@ -35,17 +34,18 @@ class YoutubeScreen extends StatelessWidget {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
-              child: ChannelWidget(),
-            ),
+            ChannelWidget(),
             Expanded(
-              child: ListView.builder(
-                padding: const EdgeInsets.only(
+              child: ListView.separated(
+                padding: EdgeInsets.only(
+                  top: 8.0,
                   right: 16.0,
                   left: 16.0,
-                  bottom: 40.0,
+                  bottom: MediaQuery.of(context).padding.bottom + 8.0,
                 ),
+                separatorBuilder:
+                    (BuildContext context, int index) =>
+                        const SizedBox(height: 12.0),
                 itemCount: youtubeProvider.videos.length,
                 itemBuilder: (context, index) {
                   final video = youtubeProvider.videos[index];
