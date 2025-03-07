@@ -14,11 +14,27 @@ jobs:
         with:
           channel: 'stable'
           architecture: x64
+
       - run: flutter pub get
-      
+
+      - name: Ensure Podfile has platform version
+        run: |
+          if [ ! -f ios/Podfile ]; then
+            cd ios && pod init
+          fi
+          sed -i '' "s/^# platform :ios, '.*'/platform :ios, '12.0'/" ios/Podfile
 
       - run: pod repo update
         working-directory: ios
+
+      - name: Create .env file
+        run: |
+          echo "API_KEY=${{ secrets.API_KEY }}" >> .env
+          echo "STREAM=${{ secrets.STREAM }}" >> .env
+          echo "CURRENT_TITLE=${{ secrets.CURRENT_TITLE }}" >> .env
+
+      - name: Move .env file to flutter project
+        run: mv .env ios/.env
 
       - run: flutter build ios --release --no-codesign
 
