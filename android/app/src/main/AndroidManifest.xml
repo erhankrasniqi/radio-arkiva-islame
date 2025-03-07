@@ -14,7 +14,7 @@
         android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK"/>
     <application
         android:usesCleartextTraffic="true"
-        android:label="radio_arkiva_islame"
+        android:label="Arkiva Islame"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
