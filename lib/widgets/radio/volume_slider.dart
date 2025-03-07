@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_volume_controller/flutter_volume_controller.dart';
+import 'package:volume_controller/volume_controller.dart';
+import 'dart:async';
 
 class VolumeSliderWidget extends StatefulWidget {
   const VolumeSliderWidget({super.key});
@@ -9,34 +10,28 @@ class VolumeSliderWidget extends StatefulWidget {
 }
 
 class VolumeSliderWidgetState extends State<VolumeSliderWidget> {
-  double setVolumeValue = 0;
+  late final VolumeController _volumeController;
+  late final StreamSubscription<double> _subscription;
+
+  double _volumeValue = 0;
+  bool _isDragging = false;
 
   @override
   void initState() {
     super.initState();
 
-    FlutterVolumeController.updateShowSystemUI(true);
+    _volumeController = VolumeController.instance;
 
-    FlutterVolumeController.getVolume().then((volume) {
-      if (mounted) {
-        setState(() {
-          setVolumeValue = volume ?? 0.0;
-        });
+    _subscription = _volumeController.addListener((volume) {
+      if (!_isDragging) {
+        setState(() => _volumeValue = volume);
       }
-    });
-
-    FlutterVolumeController.addListener((volume) {
-      if (mounted && volume != setVolumeValue) {
-        setState(() {
-          setVolumeValue = volume;
-        });
-      }
-    });
+    }, fetchInitialVolume: true);
   }
 
   @override
   void dispose() {
-    FlutterVolumeController.removeListener();
+    _subscription.cancel();
     super.dispose();
   }
 
@@ -57,15 +52,15 @@ class VolumeSliderWidgetState extends State<VolumeSliderWidget> {
             max: 1,
             onChanged: (double value) {
               setState(() {
-                setVolumeValue = value;
+                _isDragging = true;
+                _volumeValue = value;
               });
             },
-            onChangeEnd: (double value) {
-              WidgetsBinding.instance.addPostFrameCallback((_) {
-                FlutterVolumeController.setVolume(value);
-              });
+            onChangeEnd: (double value) async {
+              setState(() => _isDragging = false);
+              await _volumeController.setVolume(value);
             },
-            value: setVolumeValue,
+            value: _volumeValue,
           ),
         ),
         Icon(Icons.volume_up, size: 24.0),
