@@ -18,11 +18,36 @@ class SettingsScreen extends StatelessWidget {
 class OptionPicker extends StatelessWidget {
   const OptionPicker({super.key});
 
+  void _showInfoDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder:
+          (_) => AlertDialog(
+            title: const Text("Developed by"),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: const [
+                Text("Aid Syla & Elmedin Fejzullahu"),
+                SizedBox(height: 8),
+                Text("Contact: aetech.dev@proton.me"),
+              ],
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: const Text("Close"),
+              ),
+            ],
+          ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
 
-    return Column(
+    return ListView(
       children: <Widget>[
         RadioListTile<Options>(
           value: Options.automatic,
@@ -47,6 +72,21 @@ class OptionPicker extends StatelessWidget {
             if (value != null) themeProvider.setTheme(value);
           },
           title: const Text(Strings.light),
+        ),
+        Divider(),
+        const AboutListTile(
+          applicationName: "Arkiva Islame",
+          applicationVersion: "1.0.0",
+          applicationIcon: Icon(Icons.info_outline),
+          icon: Icon(Icons.article),
+          aboutBoxChildren: <Widget>[
+            Text("Dëgjoni radion Arkiva Islame kudo dhe në çdo kohë."),
+          ],
+        ),
+        ListTile(
+          leading: Icon(Icons.info_outline),
+          title: const Text("Development team"),
+          onTap: () => _showInfoDialog(context),
         ),
       ],
     );
