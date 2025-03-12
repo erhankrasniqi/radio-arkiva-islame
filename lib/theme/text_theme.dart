@@ -11,7 +11,7 @@ TextTheme createTextTheme(BuildContext context) {
     bodySmall: Theme.of(context).textTheme.bodySmall?.copyWith(fontSize: 14),
     headlineSmall: Theme.of(
       context,
-    ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w900),
+    ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w700),
     titleLarge: Theme.of(
       context,
     ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w700),

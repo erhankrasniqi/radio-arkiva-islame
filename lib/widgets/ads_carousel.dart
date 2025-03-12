@@ -6,45 +6,71 @@ import 'package:radio_arkiva_islame/data/model.dart';
 import 'package:radio_arkiva_islame/services/firestore_service.dart';
 import 'ad_item.dart';
 
-class AdsCarousel extends StatelessWidget {
+class AdsCarousel extends StatefulWidget {
   const AdsCarousel({super.key});
+
+  @override
+  AdsCarouselState createState() => AdsCarouselState();
+}
+
+class AdsCarouselState extends State<AdsCarousel> {
+  late final Stream<List<Ad>> _adsStream;
+
+  @override
+  void initState() {
+    super.initState();
+    _adsStream = FirestoreService().getAds();
+    debugPrint("AdsCarousel: Initialized ads stream.");
+  }
 
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<List<Ad>>(
-      stream: FirestoreService().getAds(),
+      stream: _adsStream,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
+          debugPrint("AdsCarousel: Waiting for ads data.");
           return _buildLoadingWidget();
         }
         if (snapshot.hasError) {
+          debugPrint("AdsCarousel: Error loading ads: ${snapshot.error}");
           return _buildMessageWidget(Strings.errorLoadingAds);
         }
         final ads = snapshot.data ?? [];
+        debugPrint("AdsCarousel: Received ${ads.length} ads.");
         if (ads.isEmpty) {
+          debugPrint("AdsCarousel: No ads available.");
           return _buildMessageWidget(Strings.noAds);
         }
+
+        // Pre-cache all ad images.
         final precacheFuture = Future.wait(
-          ads
-              .map(
-                (ad) => precacheImage(
-                  CachedNetworkImageProvider(ad.image),
-                  context,
-                ),
-              )
-              .toList(),
+          ads.map((ad) {
+            debugPrint("AdsCarousel: Pre-caching image for ad: ${ad.image}");
+            return precacheImage(CachedNetworkImageProvider(ad.image), context);
+          }).toList(),
         );
         return FutureBuilder(
           future: precacheFuture,
           builder: (context, precacheSnapshot) {
             if (precacheSnapshot.connectionState != ConnectionState.done) {
+              debugPrint("AdsCarousel: Waiting for images to pre-cache.");
               return _buildLoadingWidget();
             }
             return Padding(
               padding: const EdgeInsets.only(bottom: 0.0),
               child: ExpandableCarousel(
-                key: const ValueKey("ads_carousel"),
+                key: ValueKey("ads_carousel"),
                 options: ExpandableCarouselOptions(
+                  enableInfiniteScroll: false,
+                  padEnds: true,
+                  disableCenter: true,
+                  autoPlay: true,
+                  autoPlayInterval: const Duration(seconds: 6),
+                  autoPlayCurve: Curves.ease,
+                  autoPlayAnimationDuration: const Duration(milliseconds: 500),
+                  floatingIndicator: false,
+                  viewportFraction: 0.85,
                   slideIndicator: CircularStaticIndicator(
                     slideIndicatorOptions: SlideIndicatorOptions(
                       currentIndicatorColor:
@@ -57,15 +83,6 @@ class AdsCarousel extends StatelessWidget {
                       enableAnimation: true,
                     ),
                   ),
-                  enableInfiniteScroll: true,
-                  padEnds: false,
-                  disableCenter: false,
-                  autoPlay: true,
-                  autoPlayInterval: const Duration(seconds: 6),
-                  autoPlayCurve: Curves.ease,
-                  autoPlayAnimationDuration: const Duration(milliseconds: 500),
-                  floatingIndicator: false,
-                  viewportFraction: 0.7,
                 ),
                 items:
                     ads.map((ad) {
@@ -73,10 +90,9 @@ class AdsCarousel extends StatelessWidget {
                         builder: (BuildContext context) {
                           return Container(
                             margin: const EdgeInsets.only(
-                              left: 8.0,
+                              right: 8.0,
                               bottom: 16.0,
                             ),
-                            width: MediaQuery.of(context).size.width,
                             child: AdItem(ad: ad),
                           );
                         },

@@ -15,7 +15,7 @@ class NowPlayingText extends StatelessWidget {
         return Text(
           mediaItem?.title ?? '',
           style: Theme.of(context).textTheme.titleMedium!.copyWith(
-            color: Theme.of(context).colorScheme.onSurfaceVariant,
+            color: Theme.of(context).colorScheme.onSurface,
           ),
           softWrap: true,
           maxLines: null,

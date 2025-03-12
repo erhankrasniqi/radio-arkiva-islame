@@ -67,6 +67,7 @@ class AdItem extends StatelessWidget {
                           context,
                         ).textTheme.titleMedium!.copyWith(
                           color: Theme.of(context).colorScheme.primary,
+                          fontWeight: FontWeight.w700,
                         ),
                       ),
                       Text(

@@ -30,7 +30,9 @@ class AudioPlayerHandler extends BaseAudioHandler with SeekHandler {
   }
 
   Future<void> _init() async {
+    print("DEBUG: Initializing AudioPlayerHandler.");
     _hasInternet = await _checkInternet();
+    print("DEBUG: Initial internet status: $_hasInternet");
     _player.playbackEventStream.map(_transformEvent).pipe(playbackState);
     mediaItem.add(_baseMediaItem);
 
@@ -38,7 +40,7 @@ class AudioPlayerHandler extends BaseAudioHandler with SeekHandler {
       await _initializeAudioSource();
       await _fetchCurrentTitle();
     } else {
-      print("No internet. Audio source not set.");
+      print("DEBUG: No internet at initialization. Audio source not set.");
     }
 
     _titleFetchTimer = Timer.periodic(const Duration(seconds: 10), (timer) {
@@ -49,63 +51,81 @@ class AudioPlayerHandler extends BaseAudioHandler with SeekHandler {
       result,
     ) async {
       bool internetNow = await _checkInternet();
-      if (internetNow && !_hasInternet) {
-        _hasInternet = true;
-        print("Internet restored.");
-        // DO NOT RE-ADD MEDIA ITEM, JUST UPDATE TITLE LATER
-        _fetchCurrentTitle();
-      } else if (!internetNow && _hasInternet) {
+      print("DEBUG: Connectivity changed. New internet status: $internetNow");
+      if (!internetNow && _hasInternet) {
         _hasInternet = false;
-        print("Internet lost. Pausing playback.");
+        // Reset the flag so the audio source is reinitialized when connection is restored.
+        // _audioSourceInitialized = false;
+        print(
+          "DEBUG: Internet lost. Pausing playback and resetting audio source.",
+        );
         await pause();
+      } else if (internetNow && !_hasInternet) {
+        _hasInternet = true;
+        print("DEBUG: Internet restored. Auto-playing stream.");
+        await play();
       }
     });
   }
 
   Future<void> _initializeAudioSource() async {
     try {
+      print("DEBUG: Setting audio source.");
       await _player.setAudioSource(
         AudioSource.uri(Uri.parse(_baseMediaItem.id)),
       );
       _audioSourceInitialized = true;
-      print("Audio source initialized.");
+      print("DEBUG: Audio source initialized successfully.");
     } catch (e) {
-      print("Error setting audio source: $e");
+      print("DEBUG: Error setting audio source: $e");
     }
   }
 
   @override
   Future<void> play() async {
     if (!_hasInternet) {
-      print("No internet. Cannot play.");
+      print("DEBUG: No internet. Cannot play.");
       return;
     }
     if (!_audioSourceInitialized) {
+      print("DEBUG: Audio source not initialized. Initializing now.");
       await _initializeAudioSource();
     }
     try {
+      // Second snippet: Manual reset before playing if stuck in a loading/buffering state.
+      if (_player.processingState == ProcessingState.loading ||
+          _player.processingState == ProcessingState.buffering) {
+        print(
+          "DEBUG: Player in loading/buffering state. Resetting playback position to 0.",
+        );
+        await _player.seek(Duration.zero);
+      }
+      print("DEBUG: Attempting to play audio.");
       await _player.play();
-      _fetchCurrentTitle(); // Make sure title fetch starts again
+      _fetchCurrentTitle(); // Ensure title fetch continues
+      print("DEBUG: Audio play triggered.");
     } catch (e) {
-      print("Error playing audio: $e");
+      print("DEBUG: Error playing audio: $e");
     }
   }
 
   @override
   Future<void> pause() async {
     try {
+      print("DEBUG: Pausing audio playback.");
       await _player.pause();
     } catch (e) {
-      print("Error pausing audio: $e");
+      print("DEBUG: Error pausing audio: $e");
     }
   }
 
   @override
   Future<void> stop() async {
     try {
+      print("DEBUG: Stopping audio playback.");
       await _player.stop();
     } catch (e) {
-      print("Error stopping audio: $e");
+      print("DEBUG: Error stopping audio: $e");
     }
   }
 
@@ -139,7 +159,7 @@ class AudioPlayerHandler extends BaseAudioHandler with SeekHandler {
 
   Future<void> _fetchCurrentTitle() async {
     if (!_hasInternet) {
-      print("No internet. Skipping title fetch.");
+      print("DEBUG: No internet. Skipping title fetch.");
       return;
     }
     try {
@@ -160,21 +180,28 @@ class AudioPlayerHandler extends BaseAudioHandler with SeekHandler {
                   )
                   .trim();
           if (formattedTitle.isEmpty) formattedTitle = Strings.unknownTitle;
-          // UPDATE MEDIA ITEM WITHOUT RE-ADDING IT
+          // Update the media item without re-adding it.
           mediaItem.add(mediaItem.value!.copyWith(title: formattedTitle));
-          print("Updated title: $formattedTitle");
+          print("DEBUG: Updated title: $formattedTitle");
         }
+      } else {
+        print(
+          "DEBUG: Title fetch failed with status code: ${response.statusCode}",
+        );
       }
     } catch (e) {
-      print("Error fetching title: $e");
+      print("DEBUG: Error fetching title: $e");
     }
   }
 
   Future<bool> _checkInternet() async {
     final List<ConnectivityResult> connectivityResult =
         await Connectivity().checkConnectivity();
-    return connectivityResult.contains(ConnectivityResult.mobile) ||
+    bool hasInternet =
+        connectivityResult.contains(ConnectivityResult.mobile) ||
         connectivityResult.contains(ConnectivityResult.wifi) ||
         connectivityResult.contains(ConnectivityResult.ethernet);
+    print("DEBUG: _checkInternet result: $hasInternet");
+    return hasInternet;
   }
 }
