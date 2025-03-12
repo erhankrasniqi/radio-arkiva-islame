@@ -23,20 +23,20 @@ class OptionPicker extends StatelessWidget {
       context: context,
       builder:
           (_) => AlertDialog(
-            title: const Text("Developed by"),
+            title: const Text(Strings.developedBy),
             content: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: const [
-                Text("Aid Syla & Elmedin Fejzullahu"),
+                Text(Strings.developers),
                 SizedBox(height: 8),
-                Text("Contact: aetech.dev@proton.me"),
+                Text(Strings.contactDevelopers),
               ],
             ),
             actions: [
               TextButton(
                 onPressed: () => Navigator.of(context).pop(),
-                child: const Text("Close"),
+                child: const Text(Strings.close),
               ),
             ],
           ),
@@ -75,17 +75,15 @@ class OptionPicker extends StatelessWidget {
         ),
         Divider(),
         const AboutListTile(
-          applicationName: "Arkiva Islame",
+          applicationName: Strings.arkivaIslame,
           applicationVersion: "1.0.0",
           applicationIcon: Icon(Icons.info_outline),
           icon: Icon(Icons.article),
-          aboutBoxChildren: <Widget>[
-            Text("Dëgjoni radion Arkiva Islame kudo dhe në çdo kohë."),
-          ],
+          aboutBoxChildren: <Widget>[Text(Strings.aboutBox)],
         ),
         ListTile(
           leading: Icon(Icons.info_outline),
-          title: const Text("Development team"),
+          title: const Text(Strings.developmentTeam),
           onTap: () => _showInfoDialog(context),
         ),
       ],

@@ -1,4 +1,13 @@
 class Strings {
+  static const String developedBy = "Developed By";
+  static const String developmentTeam = "Development Team";
+  static const String developers = "Aid Syla & Elmedin Fejzullahu";
+  static const String contactDevelopers = "Contact: aetech.dev@proton.me";
+  static const String close = "Close";
+
+  static const String aboutBox =
+      "Dëgjoni radion Arkiva Islame kudo dhe në çdo kohë.";
+
   static const String appTitle = 'Radio Arkiva Islame';
   static const String arkivaIslame = 'Arkiva Islame';
   static const String arkivaIslameYoutube = '@arkivaislame1675';
