@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:radio_arkiva_islame/constants/constants.dart';
 import 'package:radio_arkiva_islame/constants/strings.dart';
+import 'package:radio_arkiva_islame/utils/debug_utils.dart';
 
 late AudioHandler audioHandler;
 
@@ -30,9 +31,9 @@ class AudioPlayerHandler extends BaseAudioHandler with SeekHandler {
   }
 
   Future<void> _init() async {
-    print("DEBUG: Initializing AudioPlayerHandler.");
+    logDebug("DEBUG: Initializing AudioPlayerHandler.");
     _hasInternet = await _checkInternet();
-    print("DEBUG: Initial internet status: $_hasInternet");
+    logDebug("DEBUG: Initial internet status: $_hasInternet");
     _player.playbackEventStream.map(_transformEvent).pipe(playbackState);
     mediaItem.add(_baseMediaItem);
 
@@ -40,7 +41,7 @@ class AudioPlayerHandler extends BaseAudioHandler with SeekHandler {
       await _initializeAudioSource();
       await _fetchCurrentTitle();
     } else {
-      print("DEBUG: No internet at initialization. Audio source not set.");
+      logDebug("DEBUG: No internet at initialization. Audio source not set.");
     }
 
     _titleFetchTimer = Timer.periodic(const Duration(seconds: 10), (timer) {
@@ -51,18 +52,20 @@ class AudioPlayerHandler extends BaseAudioHandler with SeekHandler {
       result,
     ) async {
       bool internetNow = await _checkInternet();
-      print("DEBUG: Connectivity changed. New internet status: $internetNow");
+      logDebug(
+        "DEBUG: Connectivity changed. New internet status: $internetNow",
+      );
       if (!internetNow && _hasInternet) {
         _hasInternet = false;
         // Reset the flag so the audio source is reinitialized when connection is restored.
         // _audioSourceInitialized = false;
-        print(
+        logDebug(
           "DEBUG: Internet lost. Pausing playback and resetting audio source.",
         );
         await pause();
       } else if (internetNow && !_hasInternet) {
         _hasInternet = true;
-        print("DEBUG: Internet restored. Auto-playing stream.");
+        logDebug("DEBUG: Internet restored. Auto-playing stream.");
         await play();
       }
     });
@@ -70,62 +73,62 @@ class AudioPlayerHandler extends BaseAudioHandler with SeekHandler {
 
   Future<void> _initializeAudioSource() async {
     try {
-      print("DEBUG: Setting audio source.");
+      logDebug("DEBUG: Setting audio source.");
       await _player.setAudioSource(
         AudioSource.uri(Uri.parse(_baseMediaItem.id)),
       );
       _audioSourceInitialized = true;
-      print("DEBUG: Audio source initialized successfully.");
+      logDebug("DEBUG: Audio source initialized successfully.");
     } catch (e) {
-      print("DEBUG: Error setting audio source: $e");
+      logDebug("DEBUG: Error setting audio source: $e");
     }
   }
 
   @override
   Future<void> play() async {
     if (!_hasInternet) {
-      print("DEBUG: No internet. Cannot play.");
+      logDebug("DEBUG: No internet. Cannot play.");
       return;
     }
     if (!_audioSourceInitialized) {
-      print("DEBUG: Audio source not initialized. Initializing now.");
+      logDebug("DEBUG: Audio source not initialized. Initializing now.");
       await _initializeAudioSource();
     }
     try {
       // Second snippet: Manual reset before playing if stuck in a loading/buffering state.
       if (_player.processingState == ProcessingState.loading ||
           _player.processingState == ProcessingState.buffering) {
-        print(
+        logDebug(
           "DEBUG: Player in loading/buffering state. Resetting playback position to 0.",
         );
         await _player.seek(Duration.zero);
       }
-      print("DEBUG: Attempting to play audio.");
+      logDebug("DEBUG: Attempting to play audio.");
       await _player.play();
       _fetchCurrentTitle(); // Ensure title fetch continues
-      print("DEBUG: Audio play triggered.");
+      logDebug("DEBUG: Audio play triggered.");
     } catch (e) {
-      print("DEBUG: Error playing audio: $e");
+      logDebug("DEBUG: Error playing audio: $e");
     }
   }
 
   @override
   Future<void> pause() async {
     try {
-      print("DEBUG: Pausing audio playback.");
+      logDebug("DEBUG: Pausing audio playback.");
       await _player.pause();
     } catch (e) {
-      print("DEBUG: Error pausing audio: $e");
+      logDebug("DEBUG: Error pausing audio: $e");
     }
   }
 
   @override
   Future<void> stop() async {
     try {
-      print("DEBUG: Stopping audio playback.");
+      logDebug("DEBUG: Stopping audio playback.");
       await _player.stop();
     } catch (e) {
-      print("DEBUG: Error stopping audio: $e");
+      logDebug("DEBUG: Error stopping audio: $e");
     }
   }
 
@@ -159,7 +162,7 @@ class AudioPlayerHandler extends BaseAudioHandler with SeekHandler {
 
   Future<void> _fetchCurrentTitle() async {
     if (!_hasInternet) {
-      print("DEBUG: No internet. Skipping title fetch.");
+      logDebug("DEBUG: No internet. Skipping title fetch.");
       return;
     }
     try {
@@ -182,15 +185,15 @@ class AudioPlayerHandler extends BaseAudioHandler with SeekHandler {
           if (formattedTitle.isEmpty) formattedTitle = Strings.unknownTitle;
           // Update the media item without re-adding it.
           mediaItem.add(mediaItem.value!.copyWith(title: formattedTitle));
-          print("DEBUG: Updated title: $formattedTitle");
+          logDebug("DEBUG: Updated title: $formattedTitle");
         }
       } else {
-        print(
+        logDebug(
           "DEBUG: Title fetch failed with status code: ${response.statusCode}",
         );
       }
     } catch (e) {
-      print("DEBUG: Error fetching title: $e");
+      logDebug("DEBUG: Error fetching title: $e");
     }
   }
 
@@ -201,7 +204,7 @@ class AudioPlayerHandler extends BaseAudioHandler with SeekHandler {
         connectivityResult.contains(ConnectivityResult.mobile) ||
         connectivityResult.contains(ConnectivityResult.wifi) ||
         connectivityResult.contains(ConnectivityResult.ethernet);
-    print("DEBUG: _checkInternet result: $hasInternet");
+    logDebug("DEBUG: _checkInternet result: $hasInternet");
     return hasInternet;
   }
 }

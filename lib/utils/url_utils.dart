@@ -1,3 +1,4 @@
+import 'package:radio_arkiva_islame/utils/debug_utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 Future<void> launchValidatedUrl(String urlString) async {
@@ -13,7 +14,7 @@ Future<void> launchValidatedUrl(String urlString) async {
   final Uri? uri = Uri.tryParse(urlString);
   if (uri == null ||
       (uri.host.isEmpty && uri.scheme != 'tel' && uri.scheme != 'mailto')) {
-    print('Invalid URL: $urlString');
+    logDebug('Invalid URL: $urlString');
     return;
   }
 
@@ -22,7 +23,7 @@ Future<void> launchValidatedUrl(String urlString) async {
       throw 'Could not launch $uri';
     }
   } catch (e) {
-    print('Error launching URL: $e');
+    logDebug('Error launching URL: $e');
   }
 }
 

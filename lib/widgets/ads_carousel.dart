@@ -4,6 +4,7 @@ import 'package:flutter_carousel_widget/flutter_carousel_widget.dart';
 import 'package:radio_arkiva_islame/constants/strings.dart';
 import 'package:radio_arkiva_islame/data/model.dart';
 import 'package:radio_arkiva_islame/services/firestore_service.dart';
+import 'package:radio_arkiva_islame/utils/debug_utils.dart'; // Import utility
 import 'ad_item.dart';
 
 class AdsCarousel extends StatefulWidget {
@@ -20,7 +21,7 @@ class AdsCarouselState extends State<AdsCarousel> {
   void initState() {
     super.initState();
     _adsStream = FirestoreService().getAds();
-    debugPrint("AdsCarousel: Initialized ads stream.");
+    logDebug("AdsCarousel: Initialized ads stream.");
   }
 
   @override
@@ -29,32 +30,32 @@ class AdsCarouselState extends State<AdsCarousel> {
       stream: _adsStream,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          debugPrint("AdsCarousel: Waiting for ads data.");
+          logDebug("AdsCarousel: Waiting for ads data.");
           return _buildLoadingWidget();
         }
         if (snapshot.hasError) {
-          debugPrint("AdsCarousel: Error loading ads: ${snapshot.error}");
+          logDebug("AdsCarousel: Error loading ads: ${snapshot.error}");
           return _buildMessageWidget(Strings.errorLoadingAds);
         }
         final ads = snapshot.data ?? [];
-        debugPrint("AdsCarousel: Received ${ads.length} ads.");
+        logDebug("AdsCarousel: Received ${ads.length} ads.");
         if (ads.isEmpty) {
-          debugPrint("AdsCarousel: No ads available.");
+          logDebug("AdsCarousel: No ads available.");
           return _buildMessageWidget(Strings.noAds);
         }
 
-        // Pre-cache all ad images.
         final precacheFuture = Future.wait(
           ads.map((ad) {
-            debugPrint("AdsCarousel: Pre-caching image for ad: ${ad.image}");
+            logDebug("AdsCarousel: Pre-caching image for ad: ${ad.image}");
             return precacheImage(CachedNetworkImageProvider(ad.image), context);
           }).toList(),
         );
+
         return FutureBuilder(
           future: precacheFuture,
           builder: (context, precacheSnapshot) {
             if (precacheSnapshot.connectionState != ConnectionState.done) {
-              debugPrint("AdsCarousel: Waiting for images to pre-cache.");
+              logDebug("AdsCarousel: Waiting for images to pre-cache.");
               return _buildLoadingWidget();
             }
             return Padding(

@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:radio_arkiva_islame/constants/constants.dart';
 import 'package:radio_arkiva_islame/constants/strings.dart';
+import 'package:radio_arkiva_islame/utils/debug_utils.dart';
 
 class YoutubeService {
   static const String yt = Youtube.yt;
@@ -25,7 +26,7 @@ class YoutubeService {
         // 1 - 1 minute, 1440 daily
         final List<dynamic>? cachedData = box.get(Strings.cachedVideos);
         if (cachedData != null) {
-          print(
+          logDebug(
             "[CACHE] Returning cached videos (Last fetch: $lastFetchDateStr)",
           );
           return cachedData
@@ -43,8 +44,8 @@ class YoutubeService {
         DateFormat('yyyy-MM-dd HH:mm').format(now),
       );
     }
-    print("[DEBUG] Fetching videos at ${DateTime.now()}");
-    print("$newVideos");
+    logDebug("[DEBUG] Fetching videos at ${DateTime.now()}");
+    logDebug("$newVideos");
     return newVideos;
   }
 
@@ -78,11 +79,11 @@ class YoutubeService {
 
         return await fetchVideoDetails(videoIds, videoInfo);
       } else {
-        print('Error fetching videos: ${searchResponse.statusCode}');
+        logDebug('Error fetching videos: ${searchResponse.statusCode}');
         return [];
       }
     } catch (e) {
-      print('Exception: $e');
+      logDebug('Exception: $e');
       return [];
     }
   }
@@ -122,11 +123,11 @@ class YoutubeService {
         }
         return formattedVideos;
       } else {
-        print('Error fetching video details: ${detailsResponse.statusCode}');
+        logDebug('Error fetching video details: ${detailsResponse.statusCode}');
         return [];
       }
     } catch (e) {
-      print('Exception: $e');
+      logDebug('Exception: $e');
       return [];
     }
   }
