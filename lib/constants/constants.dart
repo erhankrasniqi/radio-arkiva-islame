@@ -17,4 +17,6 @@ class Assets {
   static const String logo = 'assets/arkiva_islame_hq.png';
   static const String logoSquareBg = 'assets/logo_square_bg.jpg';
   static const String placeholder = 'assets/placeholder.png';
+  static const String artUri =
+      'https://res.cloudinary.com/dyozusbyi/image/upload/v1741790007/artMedia_xropxn.png';
 }

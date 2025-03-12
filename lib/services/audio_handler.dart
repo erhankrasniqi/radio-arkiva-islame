@@ -14,9 +14,7 @@ class AudioPlayerHandler extends BaseAudioHandler with SeekHandler {
     id: RadioStream.stream,
     album: Strings.appTitle,
     title: Strings.loading,
-    artUri: Uri.parse(
-      'https://arkivaislame.com/wp-content/uploads/2024/03/logo-hd.png',
-    ),
+    artUri: Uri.parse(Assets.artUri),
   );
 
   final _player = AudioPlayer();
