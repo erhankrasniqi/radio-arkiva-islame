@@ -19,8 +19,6 @@ class AudioPlayerHandler extends BaseAudioHandler with SeekHandler {
 
   final _player = AudioPlayer();
   String _lastFetchedTitle = _baseMediaItem.title;
-  Timer? _titleFetchTimer;
-  StreamSubscription<List<ConnectivityResult>>? _connectivitySubscription;
   bool _hasInternet = false;
   bool _audioSourceInitialized = false;
 
@@ -42,21 +40,17 @@ class AudioPlayerHandler extends BaseAudioHandler with SeekHandler {
       logDebug("DEBUG: No internet at initialization. Audio source not set.");
     }
 
-    _titleFetchTimer = Timer.periodic(const Duration(seconds: 10), (timer) {
+    Timer.periodic(const Duration(seconds: 10), (timer) {
       _fetchCurrentTitle();
     });
 
-    _connectivitySubscription = Connectivity().onConnectivityChanged.listen((
-      result,
-    ) async {
+    Connectivity().onConnectivityChanged.listen((result) async {
       bool internetNow = await _checkInternet();
       logDebug(
         "DEBUG: Connectivity changed. New internet status: $internetNow",
       );
       if (!internetNow && _hasInternet) {
         _hasInternet = false;
-        // Reset the flag so the audio source is reinitialized when connection is restored.
-        // _audioSourceInitialized = false;
         logDebug(
           "DEBUG: Internet lost. Pausing playback and resetting audio source.",
         );
@@ -93,7 +87,7 @@ class AudioPlayerHandler extends BaseAudioHandler with SeekHandler {
       await _initializeAudioSource();
     }
     try {
-      // Second snippet: Manual reset before playing if stuck in a loading/buffering state.
+      // Manual reset before playing if stuck in a loading/buffering state.
       if (_player.processingState == ProcessingState.loading ||
           _player.processingState == ProcessingState.buffering) {
         logDebug(
@@ -103,7 +97,8 @@ class AudioPlayerHandler extends BaseAudioHandler with SeekHandler {
       }
       logDebug("DEBUG: Attempting to play audio.");
       await _player.play();
-      _fetchCurrentTitle(); // Ensure title fetch continues
+      // Ensure title fetch continues
+      _fetchCurrentTitle();
       logDebug("DEBUG: Audio play triggered.");
     } catch (e) {
       logDebug("DEBUG: Error playing audio: $e");
@@ -181,7 +176,6 @@ class AudioPlayerHandler extends BaseAudioHandler with SeekHandler {
                   )
                   .trim();
           if (formattedTitle.isEmpty) formattedTitle = Strings.unknownTitle;
-          // Update the media item without re-adding it.
           mediaItem.add(mediaItem.value!.copyWith(title: formattedTitle));
           logDebug("DEBUG: Updated title: $formattedTitle");
         }
