@@ -3,6 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hive_flutter/adapters.dart';
+import 'package:radio_arkiva_islame/constants/constants.dart';
 import 'package:radio_arkiva_islame/constants/strings.dart';
 import 'package:radio_arkiva_islame/services/audio_handler.dart';
 import 'package:radio_arkiva_islame/services/firebase_options.dart';
@@ -36,7 +37,7 @@ Future<void> main() async {
       androidNotificationClickStartsActivity: true,
       androidResumeOnClick: true,
       androidShowNotificationBadge: true,
-      androidNotificationIcon: 'drawable/ic_launcher_monochrome',
+      androidNotificationIcon: Assets.icLauncherMonochrome,
       preloadArtwork: true,
     ),
   );

@@ -18,5 +18,6 @@ class Assets {
   static const String logoSquareBg = 'assets/logo_square_bg.jpg';
   static const String placeholder = 'assets/placeholder.png';
   static const String artUri =
-      'https://res.cloudinary.com/dyozusbyi/image/upload/v1741790007/artMedia_xropxn.png';
+      'https://res.cloudinary.com/dsue5gick/image/upload/v1741821886/b9jwdisxh8kc7lui3lrk.png';
+  static const String icLauncherMonochrome = 'drawable/ic_launcher_monochrome';
 }
