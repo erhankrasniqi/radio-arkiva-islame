@@ -19,6 +19,8 @@ class AdDetails extends StatelessWidget {
         ad.instagram.name.trim().isNotEmpty &&
         ad.instagram.url.trim().isNotEmpty;
     final bool showSocialMediaSection = hasFacebook || hasInstagram;
+    final bool showContactSection =
+        ad.phone.trim().isNotEmpty || ad.address.trim().isNotEmpty;
     return Scaffold(
       appBar: AppBar(
         title: Text(ad.title, softWrap: true, overflow: TextOverflow.visible),
@@ -56,34 +58,39 @@ class AdDetails extends StatelessWidget {
                           fontWeight: FontWeight.normal,
                         ),
                       ),
-                      SizedBox(
-                        width: double.infinity,
-                        child: FilledButton(
-                          onPressed:
-                              () => launchValidatedUrl(ad.callToActionUrl),
-                          child: Text(Strings.more),
+                      if (ad.callToActionUrl.trim().isNotEmpty)
+                        SizedBox(
+                          width: double.infinity,
+                          child: FilledButton(
+                            onPressed:
+                                () => launchValidatedUrl(ad.callToActionUrl),
+                            child: Text(Strings.more),
+                          ),
                         ),
-                      ),
                     ],
                   ),
-                  SectionHeader(title: Strings.contact),
-                  Column(
-                    spacing: 12.0,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      ActionItem(
-                        iconData: Icons.phone,
-                        text: ad.phone,
-                        url: "tel:${ad.phone}",
-                      ),
-                      ActionItem(
-                        iconData: Icons.location_on,
-                        text: ad.address,
-                        url: ad.address,
-                        onTap: () => launchGoogleMapsSearch(ad.address),
-                      ),
-                    ],
-                  ),
+                  if (showContactSection) ...[
+                    SectionHeader(title: Strings.contact),
+                    Column(
+                      spacing: 12.0,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        if (ad.phone.trim().isNotEmpty)
+                          ActionItem(
+                            iconData: Icons.phone,
+                            text: ad.phone,
+                            url: "tel:${ad.phone}",
+                          ),
+                        if (ad.address.trim().isNotEmpty)
+                          ActionItem(
+                            iconData: Icons.location_on,
+                            text: ad.address,
+                            url: ad.address,
+                            onTap: () => launchGoogleMapsSearch(ad.address),
+                          ),
+                      ],
+                    ),
+                  ],
                   if (showSocialMediaSection) ...[
                     SectionHeader(title: Strings.connectWithUs),
                     Column(

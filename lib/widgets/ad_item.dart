@@ -102,21 +102,22 @@ class AdItem extends StatelessWidget {
                           ),
                         ),
                       ),
-                      Expanded(
-                        flex: 7,
-                        child: FilledButton(
-                          onPressed:
-                              () => launchValidatedUrl(ad.callToActionUrl),
-                          child: Text(
-                            Strings.more,
-                            style: Theme.of(
-                              context,
-                            ).textTheme.labelMedium!.copyWith(
-                              color: Theme.of(context).colorScheme.onPrimary,
+                      if (ad.callToActionUrl.trim().isNotEmpty)
+                        Expanded(
+                          flex: 7,
+                          child: FilledButton(
+                            onPressed:
+                                () => launchValidatedUrl(ad.callToActionUrl),
+                            child: Text(
+                              Strings.more,
+                              style: Theme.of(
+                                context,
+                              ).textTheme.labelMedium!.copyWith(
+                                color: Theme.of(context).colorScheme.onPrimary,
+                              ),
                             ),
                           ),
                         ),
-                      ),
                     ],
                   ),
                 ],
