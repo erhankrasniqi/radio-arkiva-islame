@@ -30,7 +30,7 @@ class ContactScreen extends StatelessWidget {
             left: 16.0,
             right: 16.0,
             top: 16.0,
-            bottom: MediaQuery.of(context).padding.bottom + 8.0,
+            bottom: MediaQuery.of(context).padding.bottom + 4.0,
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,

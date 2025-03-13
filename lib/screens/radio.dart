@@ -38,7 +38,7 @@ class RadioScreenState extends State<RadioScreen>
               ),
               Padding(
                 padding: EdgeInsets.only(
-                  bottom: MediaQuery.of(context).padding.bottom + 8.0,
+                  bottom: MediaQuery.of(context).padding.bottom + 4.0,
                 ),
                 child: AdsCarousel(),
               ),
