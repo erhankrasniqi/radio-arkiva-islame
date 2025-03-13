@@ -2,16 +2,19 @@ import 'dart:convert';
 import 'package:hive/hive.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
+import 'package:radio_arkiva_islame/constants/constants.dart';
+import 'package:radio_arkiva_islame/constants/strings.dart';
+import 'package:radio_arkiva_islame/utils/debug_utils.dart';
 
 class YoutubeService {
-  static const String yt = 'AIzaSyDxtzeWdKubvO9Cn6tpS5Ge3zld91JPzzU';
-  static const String channelId = 'UC2dFt_PrCZxw5oFxtGHOO8g';
-  static const String cacheBox = 'youtube_cache';
+  static const String yt = Youtube.yt;
+  static const String channelId = Youtube.channelId;
+  static const String cacheBox = Strings.cacheBox;
 
   Future<List<Map<String, String>>> fetchLatestVideos() async {
     var box = await Hive.openBox(cacheBox);
     final now = DateTime.now();
-    final String? lastFetchDateStr = box.get('last_fetch_date');
+    final String? lastFetchDateStr = box.get(Strings.lastFetchDate);
 
     if (lastFetchDateStr != null) {
       final lastFetchDate = DateFormat(
@@ -20,10 +23,10 @@ class YoutubeService {
       final difference = now.difference(lastFetchDate).inMinutes;
 
       if (difference < 1440) {
-        // Change 1 to 1440 for daily fetching
-        final List<dynamic>? cachedData = box.get('cached_videos');
+        // 1 - 1 minute, 1440 daily
+        final List<dynamic>? cachedData = box.get(Strings.cachedVideos);
         if (cachedData != null) {
-          print(
+          logDebug(
             "[CACHE] Returning cached videos (Last fetch: $lastFetchDateStr)",
           );
           return cachedData
@@ -35,13 +38,14 @@ class YoutubeService {
 
     final newVideos = await _fetchVideosFromApi();
     if (newVideos.isNotEmpty) {
-      await box.put('cached_videos', newVideos);
+      await box.put(Strings.cachedVideos, newVideos);
       await box.put(
-        'last_fetch_date',
+        Strings.lastFetchDate,
         DateFormat('yyyy-MM-dd HH:mm').format(now),
       );
     }
-    print("[DEBUG] Fetching videos at ${DateTime.now()}");
+    logDebug("[DEBUG] Fetching videos at ${DateTime.now()}");
+    logDebug("$newVideos");
     return newVideos;
   }
 
@@ -75,11 +79,11 @@ class YoutubeService {
 
         return await fetchVideoDetails(videoIds, videoInfo);
       } else {
-        print('Error fetching videos: ${searchResponse.statusCode}');
+        logDebug('Error fetching videos: ${searchResponse.statusCode}');
         return [];
       }
     } catch (e) {
-      print('Exception: $e');
+      logDebug('Exception: $e');
       return [];
     }
   }
@@ -101,7 +105,13 @@ class YoutubeService {
 
         for (var video in detailsData['items']) {
           String videoId = video['id'];
-          String duration = formatDuration(video['contentDetails']['duration']);
+          String duration;
+          if (video['contentDetails'].containsKey('duration') &&
+              video['contentDetails']['duration'] != null) {
+            duration = formatDuration(video['contentDetails']['duration']);
+          } else {
+            duration = 'Premiere';
+          }
 
           formattedVideos.add({
             'videoId': videoId,
@@ -113,11 +123,11 @@ class YoutubeService {
         }
         return formattedVideos;
       } else {
-        print('Error fetching video details: ${detailsResponse.statusCode}');
+        logDebug('Error fetching video details: ${detailsResponse.statusCode}');
         return [];
       }
     } catch (e) {
-      print('Exception: $e');
+      logDebug('Exception: $e');
       return [];
     }
   }

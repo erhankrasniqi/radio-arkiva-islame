@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:radio_arkiva_islame/constants/strings.dart';
 import 'package:radio_arkiva_islame/providers/youtube_provider.dart';
-import 'package:radio_arkiva_islame/widgets/channel.dart';
+import 'package:radio_arkiva_islame/widgets/youtube_channel.dart';
 import 'package:radio_arkiva_islame/widgets/youtube_item.dart';
 
 class YoutubeScreen extends StatelessWidget {
@@ -15,22 +16,36 @@ class YoutubeScreen extends StatelessWidget {
           return const Center(child: CircularProgressIndicator());
         }
         if (youtubeProvider.videos.isEmpty) {
-          return const Center(child: Text("No videos found."));
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              spacing: 4.0,
+              children: [
+                const Text(Strings.noVideos),
+                FilledButton.tonal(
+                  onPressed:
+                      () => context.read<YoutubeProvider>().fetchVideos(),
+                  child: const Text(Strings.tryAgain),
+                ),
+              ],
+            ),
+          );
         }
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
-              child: ChannelWidget(),
-            ),
+            ChannelWidget(),
             Expanded(
-              child: ListView.builder(
-                padding: const EdgeInsets.only(
+              child: ListView.separated(
+                padding: EdgeInsets.only(
+                  top: 8.0,
                   right: 16.0,
                   left: 16.0,
-                  bottom: 40.0,
+                  bottom: MediaQuery.of(context).padding.bottom + 4.0,
                 ),
+                separatorBuilder:
+                    (BuildContext context, int index) =>
+                        const SizedBox(height: 12.0),
                 itemCount: youtubeProvider.videos.length,
                 itemBuilder: (context, index) {
                   final video = youtubeProvider.videos[index];

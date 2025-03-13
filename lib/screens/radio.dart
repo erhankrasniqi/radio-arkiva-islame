@@ -1,68 +1,50 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:radio_arkiva_islame/services/radio_service.dart';
-import 'package:radio_arkiva_islame/widgets/play_button.dart';
-import 'package:radio_arkiva_islame/widgets/now_playing_text.dart';
-import 'package:radio_arkiva_islame/widgets/volume_slider.dart';
+import 'package:radio_arkiva_islame/constants/strings.dart';
+import 'package:radio_arkiva_islame/widgets/ads_carousel.dart';
+import 'package:radio_arkiva_islame/widgets/radio/radio_player.dart';
 
-class RadioScreen extends StatelessWidget {
+class RadioScreen extends StatefulWidget {
   const RadioScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: SingleChildScrollView(child: RadioPlayerWidget()),
-    );
-  }
+  RadioScreenState createState() => RadioScreenState();
 }
 
-class RadioPlayerWidget extends StatefulWidget {
-  const RadioPlayerWidget({super.key});
-
+class RadioScreenState extends State<RadioScreen>
+    with AutomaticKeepAliveClientMixin {
   @override
-  _RadioPlayerWidgetState createState() => _RadioPlayerWidgetState();
-}
-
-class _RadioPlayerWidgetState extends State<RadioPlayerWidget> {
-  late RadioService radioService;
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    radioService = Provider.of<RadioService>(context, listen: false);
-  }
+  bool get wantKeepAlive => true;
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      color: Theme.of(context).colorScheme.surfaceContainer,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          spacing: 8.0,
-          children: [
-            Image.asset('assets/logo.png', fit: BoxFit.fitWidth),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              spacing: 4,
-              children: [
-                Text(
-                  "Radio Arkiva Islame",
-                  style: Theme.of(context).textTheme.headlineSmall!.copyWith(
-                    color: Theme.of(context).colorScheme.primary,
+    super.build(context);
+    return SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const RadioPlayerWidget(),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            spacing: 2.0,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(left: 16.0),
+                child: Text(
+                  Strings.marketing,
+                  style: Theme.of(context).textTheme.labelMedium!.copyWith(
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
                 ),
-                NowPlayingText(),
-              ],
-            ),
-            Column(
-              spacing: 12.0,
-              children: [VolumeSliderWidget(), PlayButtonWidget()],
-            ),
-          ],
-        ),
+              ),
+              Padding(
+                padding: EdgeInsets.only(
+                  bottom: MediaQuery.of(context).padding.bottom + 4.0,
+                ),
+                child: AdsCarousel(),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
