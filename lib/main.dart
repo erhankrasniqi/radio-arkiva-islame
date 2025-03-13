@@ -9,6 +9,7 @@ import 'package:radio_arkiva_islame/services/audio_handler.dart';
 import 'package:radio_arkiva_islame/services/firebase_options.dart';
 import 'package:radio_arkiva_islame/providers/youtube_provider.dart';
 import 'package:radio_arkiva_islame/providers/theme_provider.dart';
+import 'package:radio_arkiva_islame/services/radio_service.dart';
 import 'package:radio_arkiva_islame/views/app.dart';
 import 'package:provider/provider.dart';
 
@@ -45,6 +46,7 @@ Future<void> main() async {
   runApp(
     MultiProvider(
       providers: [
+        Provider(create: (context) => RadioService()),
         ChangeNotifierProvider(create: (context) => ThemeProvider()),
         ChangeNotifierProvider(
           create: (context) => YoutubeProvider()..fetchVideos(),
