@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "599506240597",
+    "project_id": "arkiva-islame",
+    "storage_bucket": "arkiva-islame.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:599506240597:android:b97655f8ae6507696300dc",
+        "android_client_info": {
+          "package_name": "com.arkivaislame.radio_arkiva_islame"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBjb4C3RlFi2u8G2SESRYE3TNip0liZ5tU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:radio_arkiva_islame/constants/constants.dart';
 import 'dart:convert';
 import 'dart:async';
+
+import 'package:radio_arkiva_islame/constants/strings.dart';
 
 class ContactDetails extends StatefulWidget {
   const ContactDetails({super.key});
@@ -42,7 +45,7 @@ class _ContactDetailsState extends State<ContactDetails> {
       if (_lastSubmissionTime != null &&
           DateTime.now().difference(_lastSubmissionTime!) <
               const Duration(minutes: 10)) {
-        _showSnackbar("Ju mund të dërgoni vetëm një mesazh çdo 10 minuta.");
+        _showSnackbar(Strings.message10Minutes);
         return;
       }
 
@@ -61,16 +64,16 @@ class _ContactDetailsState extends State<ContactDetails> {
       });
 
       if (success) {
-        _showSnackbar("Mesazhi u dërgua me sukses!");
+        _showSnackbar(Strings.messageSuccess);
         _clearForm();
       } else {
-        _showSnackbar("Dështoi dërgimi i mesazhit. Provo përsëri.");
+        _showSnackbar(Strings.messageFailed);
       }
     }
   }
 
   Future<bool> _sendFormData() async {
-    const String url = "https://formspree.io/f/mldgkppv";
+    const String url = FormSpree.endpoint;
     final response = await http.post(
       Uri.parse(url),
       headers: {"Content-Type": "application/json"},
@@ -104,35 +107,35 @@ class _ContactDetailsState extends State<ContactDetails> {
   }
 
   String? _validateName(String value) {
-    if (value.isEmpty) return 'Ju lutemi shkruani emrin tuaj';
-    if (value.length < 2) return 'Emri duhet të ketë të paktën 2 karaktere';
+    if (value.isEmpty) return Strings.writeName;
+    if (value.length < 2) return Strings.nameAtLeast2;
     if (value.length > 30) {
-      return 'Emri nuk mund të jetë më shumë se 30 karaktere';
+      return Strings.nameNoMoreThan30;
     }
     return null;
   }
 
   String? _validateEmail(String value) {
-    if (value.isEmpty) return 'Ju lutemi shkruani emailin tuaj';
+    if (value.isEmpty) return Strings.writeEmail;
     if (value.length > 30) {
-      return 'Email-i nuk mund të jetë më shumë se 30 karaktere';
+      return Strings.emailNoMoreThan30;
     }
     final emailRegex = RegExp(
       r"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+\.[a-zA-Z]+",
     );
     if (!emailRegex.hasMatch(value)) {
-      return 'Ju lutemi shkruani një email të vlefshëm';
+      return Strings.validEmail;
     }
     return null;
   }
 
   String? _validateMessage(String value) {
-    if (value.isEmpty) return 'Ju lutemi shkruani mesazhin tuaj';
+    if (value.isEmpty) return Strings.writeMessage;
     if (value.length < 15) {
-      return 'Mesazhi duhet të ketë të paktën 15 karaktere';
+      return Strings.messageAtLeast15;
     }
     if (value.length > 300) {
-      return 'Mesazhi nuk mund të jetë më shumë se 300 karaktere';
+      return Strings.messageNoMoreThan300;
     }
     return null;
   }
@@ -140,22 +143,27 @@ class _ContactDetailsState extends State<ContactDetails> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Na Shkruani')),
+      appBar: AppBar(title: const Text(Strings.writeUs), centerTitle: true),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: EdgeInsets.only(
+            top: 8.0,
+            right: 16.0,
+            left: 16.0,
+            bottom: MediaQuery.of(context).padding.bottom + 4.0,
+          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "Faleminderit që dëshironi të na kontaktoni!",
+                Strings.contactThankYou,
                 style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
               ),
               const SizedBox(height: 4.0),
               Text(
-                "Plotësoni formularin më poshtë dhe ne do t'ju përgjigjemi sa më shpejt të jetë e mundur.",
+                Strings.fillForm,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   color: Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
@@ -164,12 +172,13 @@ class _ContactDetailsState extends State<ContactDetails> {
               Form(
                 key: _formKey,
                 child: Column(
+                  spacing: 8.0,
                   children: [
                     TextFormField(
                       controller: _nameController,
                       decoration: InputDecoration(
                         border: const OutlineInputBorder(),
-                        labelText: 'Emri',
+                        labelText: Strings.name,
                         errorText: _nameError,
                       ),
                       maxLength: 30,
@@ -179,12 +188,11 @@ class _ContactDetailsState extends State<ContactDetails> {
                         });
                       },
                     ),
-                    const SizedBox(height: 8.0),
                     TextFormField(
                       controller: _emailController,
                       decoration: InputDecoration(
                         border: const OutlineInputBorder(),
-                        labelText: 'Email',
+                        labelText: Strings.email,
                         errorText: _emailError,
                       ),
                       keyboardType: TextInputType.emailAddress,
@@ -195,12 +203,11 @@ class _ContactDetailsState extends State<ContactDetails> {
                         });
                       },
                     ),
-                    const SizedBox(height: 8.0),
                     TextFormField(
                       controller: _messageController,
                       decoration: InputDecoration(
                         border: const OutlineInputBorder(),
-                        labelText: 'Mesazhi',
+                        labelText: Strings.message,
                         errorText: _messageError,
                       ),
                       maxLength: 300,
@@ -211,15 +218,17 @@ class _ContactDetailsState extends State<ContactDetails> {
                         });
                       },
                     ),
-                    const SizedBox(height: 8.0),
                     _isLoading
                         ? const Center(child: CircularProgressIndicator())
-                        : FilledButton(
-                          onPressed:
-                              _isFormValid && !_isSent
-                                  ? _validateAndSubmit
-                                  : null,
-                          child: const Text("Dërgoni mesazhin"),
+                        : SizedBox(
+                          width: double.infinity,
+                          child: FilledButton(
+                            onPressed:
+                                _isFormValid && !_isSent
+                                    ? _validateAndSubmit
+                                    : null,
+                            child: const Text(Strings.sendMessage),
+                          ),
                         ),
                   ],
                 ),

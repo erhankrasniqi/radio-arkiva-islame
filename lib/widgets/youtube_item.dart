@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:radio_arkiva_islame/constants/constants.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class YoutubeItem extends StatelessWidget {
@@ -18,11 +19,9 @@ class YoutubeItem extends StatelessWidget {
     required this.publishDate,
   });
 
-  // Function to launch YouTube video
   void _launchVideo() async {
     final youtubeUrl = "https://www.youtube.com/watch?v=$videoId";
-    final youtubeAppUrl =
-        "vnd.youtube:$videoId"; // Opens in YouTube app if installed
+    final youtubeAppUrl = "vnd.youtube:$videoId";
 
     if (await canLaunchUrl(Uri.parse(youtubeAppUrl))) {
       await launchUrl(Uri.parse(youtubeAppUrl));
@@ -36,65 +35,60 @@ class YoutubeItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 12.0),
-      child: InkWell(
-        onTap: _launchVideo,
-        borderRadius: BorderRadius.circular(12),
-        splashColor: Theme.of(
-          context,
-        ).colorScheme.primary.withValues(alpha: (0.3 * 255)),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          spacing: 12.0,
-          children: [
-            Flexible(
-              flex: 55,
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(12),
-                child: AspectRatio(
-                  aspectRatio: 16 / 9,
-                  child: CachedNetworkImage(
-                    imageUrl: thumbnailUrl,
-                    placeholder:
-                        (context, url) => const Center(
-                          child: CircularProgressIndicator(),
-                        ), // ✅ Show loading indicator
-                    errorWidget:
-                        (context, url, error) => Image.asset(
-                          'assets/mosque.png',
-                        ), // ✅ Show fallback image
-                    fit: BoxFit.cover,
-                  ),
+    return InkWell(
+      onTap: _launchVideo,
+      borderRadius: BorderRadius.circular(12),
+      splashColor: Theme.of(
+        context,
+      ).colorScheme.primary.withValues(alpha: (0.3 * 255)),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        spacing: 12.0,
+        children: [
+          Flexible(
+            flex: 55,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: AspectRatio(
+                aspectRatio: 16 / 9,
+                child: CachedNetworkImage(
+                  imageUrl: thumbnailUrl,
+                  placeholder:
+                      (context, url) =>
+                          const Center(child: CircularProgressIndicator()),
+                  errorWidget:
+                      (context, url, error) =>
+                          Image.asset(Assets.placeholder, fit: BoxFit.cover),
+                  fit: BoxFit.cover,
                 ),
               ),
             ),
-            Flexible(
-              flex: 100,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: Theme.of(context).textTheme.titleMedium,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  Row(
-                    children: [
-                      Flexible(child: DurationAndDateText(text: duration)),
-                      const Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 4.0),
-                        child: DurationAndDateText(text: '·'),
-                      ),
-                      Flexible(child: DurationAndDateText(text: publishDate)),
-                    ],
-                  ),
-                ],
-              ),
+          ),
+          Flexible(
+            flex: 100,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: Theme.of(context).textTheme.titleMedium,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                Row(
+                  children: [
+                    Flexible(child: DurationAndDateText(text: duration)),
+                    const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 4.0),
+                      child: DurationAndDateText(text: '·'),
+                    ),
+                    Flexible(child: DurationAndDateText(text: publishDate)),
+                  ],
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
