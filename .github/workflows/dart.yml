@@ -14,26 +14,10 @@ jobs:
         with:
           channel: 'stable'
           architecture: x64
-
       - run: flutter pub get
-
-      - name: Ensure Podfile has platform version
-        run: |
-          if [ ! -f ios/Podfile ]; then
-            cd ios && pod init
-          fi
-          sed -i '' "s/^# platform :ios, '.*'/platform :ios, '13.0'/" ios/Podfile
-
-      - name: Cache CocoaPods
-        uses: actions/cache@v3
-        with:
-          path: ios/Pods
-          key: ${{ runner.os }}-pods-${{ hashFiles('ios/Podfile.lock') }}
+      
 
       - run: pod repo update
-        working-directory: ios
-
-      - run: pod install
         working-directory: ios
 
       - run: flutter build ios --release --no-codesign
