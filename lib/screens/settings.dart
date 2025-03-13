@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:radio_arkiva_islame/constants/strings.dart';
 import 'package:radio_arkiva_islame/providers/theme_provider.dart';
+import 'package:radio_arkiva_islame/utils/url_utils.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
@@ -27,16 +28,19 @@ class OptionPicker extends StatelessWidget {
             content: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
-                Text(Strings.developers),
-                SizedBox(height: 8),
-                Text(Strings.contactDevelopers),
-              ],
+              children: const [Text(Strings.contactDevelopers)],
             ),
             actions: [
               TextButton(
                 onPressed: () => Navigator.of(context).pop(),
                 child: const Text(Strings.close),
+              ),
+              TextButton(
+                onPressed:
+                    () => launchValidatedUrl(
+                      "mailto:contact.dev.ae@gmail.com?subject=Pyetje rreth shërbimeve tuaja",
+                    ),
+                child: const Text(Strings.contactUs),
               ),
             ],
           ),
