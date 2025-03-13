@@ -10,7 +10,7 @@ class Youtube {
 }
 
 class FormSpree {
-  static const String endpoint = 'https://formspree.io/f/mldgkppv';
+  static const String endpoint = 'https://formspree.io/f/mrbpgdyw';
 }
 
 class Assets {
