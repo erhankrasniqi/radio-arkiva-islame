@@ -37,58 +37,60 @@ class YoutubeItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: _launchVideo,
-      borderRadius: BorderRadius.circular(12),
       splashColor: Theme.of(
         context,
       ).colorScheme.primary.withValues(alpha: (0.3 * 255)),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        spacing: 12.0,
-        children: [
-          Flexible(
-            flex: 55,
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(12),
-              child: AspectRatio(
-                aspectRatio: 16 / 9,
-                child: CachedNetworkImage(
-                  imageUrl: thumbnailUrl,
-                  placeholder:
-                      (context, url) =>
-                          const Center(child: CircularProgressIndicator()),
-                  errorWidget:
-                      (context, url, error) =>
-                          Image.asset(Assets.placeholder, fit: BoxFit.cover),
-                  fit: BoxFit.cover,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 6.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          spacing: 12.0,
+          children: [
+            Flexible(
+              flex: 55,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: AspectRatio(
+                  aspectRatio: 16 / 9,
+                  child: CachedNetworkImage(
+                    imageUrl: thumbnailUrl,
+                    placeholder:
+                        (context, url) =>
+                            const Center(child: CircularProgressIndicator()),
+                    errorWidget:
+                        (context, url, error) =>
+                            Image.asset(Assets.placeholder, fit: BoxFit.cover),
+                    fit: BoxFit.cover,
+                  ),
                 ),
               ),
             ),
-          ),
-          Flexible(
-            flex: 100,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: Theme.of(context).textTheme.titleMedium,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                Row(
-                  children: [
-                    Flexible(child: DurationAndDateText(text: duration)),
-                    const Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 4.0),
-                      child: DurationAndDateText(text: '·'),
-                    ),
-                    Flexible(child: DurationAndDateText(text: publishDate)),
-                  ],
-                ),
-              ],
+            Flexible(
+              flex: 100,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: Theme.of(context).textTheme.titleMedium,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  Row(
+                    children: [
+                      Flexible(child: DurationAndDateText(text: duration)),
+                      const Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 4.0),
+                        child: DurationAndDateText(text: '·'),
+                      ),
+                      Flexible(child: DurationAndDateText(text: publishDate)),
+                    ],
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

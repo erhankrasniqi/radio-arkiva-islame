@@ -36,16 +36,11 @@ class YoutubeScreen extends StatelessWidget {
           children: [
             ChannelWidget(),
             Expanded(
-              child: ListView.separated(
+              child: ListView.builder(
                 padding: EdgeInsets.only(
                   top: 8.0,
-                  right: 16.0,
-                  left: 16.0,
                   bottom: MediaQuery.of(context).padding.bottom + 4.0,
                 ),
-                separatorBuilder:
-                    (BuildContext context, int index) =>
-                        const SizedBox(height: 12.0),
                 itemCount: youtubeProvider.videos.length,
                 itemBuilder: (context, index) {
                   final video = youtubeProvider.videos[index];
