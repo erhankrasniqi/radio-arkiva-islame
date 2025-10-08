@@ -51,46 +51,40 @@ class OptionPicker extends StatelessWidget {
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
 
-    return ListView(
-      children: <Widget>[
-        RadioListTile<Options>(
-          value: Options.automatic,
-          groupValue: themeProvider.selectedOption,
-          onChanged: (Options? value) {
-            if (value != null) themeProvider.setTheme(value);
-          },
-          title: const Text(Strings.automatic),
-        ),
-        RadioListTile<Options>(
-          value: Options.dark,
-          groupValue: themeProvider.selectedOption,
-          onChanged: (Options? value) {
-            if (value != null) themeProvider.setTheme(value);
-          },
-          title: const Text(Strings.dark),
-        ),
-        RadioListTile<Options>(
-          value: Options.light,
-          groupValue: themeProvider.selectedOption,
-          onChanged: (Options? value) {
-            if (value != null) themeProvider.setTheme(value);
-          },
-          title: const Text(Strings.light),
-        ),
-        Divider(),
-        const AboutListTile(
-          applicationName: Strings.arkivaIslame,
-          applicationVersion: "1.0.0",
-          applicationIcon: Icon(Icons.info_outline),
-          icon: Icon(Icons.article),
-          aboutBoxChildren: <Widget>[Text(Strings.aboutBox)],
-        ),
-        ListTile(
-          leading: Icon(Icons.info_outline),
-          title: const Text(Strings.developmentTeam),
-          onTap: () => _showInfoDialog(context),
-        ),
-      ],
+    return RadioGroup<Options>(
+      groupValue: themeProvider.selectedOption,
+      onChanged: (Options? value) {
+        if (value != null) themeProvider.setTheme(value);
+      },
+      child: ListView(
+        children: <Widget>[
+          RadioListTile<Options>(
+            value: Options.automatic,
+            title: const Text(Strings.automatic),
+          ),
+          RadioListTile<Options>(
+            value: Options.dark,
+            title: const Text(Strings.dark),
+          ),
+          RadioListTile<Options>(
+            value: Options.light,
+            title: const Text(Strings.light),
+          ),
+          Divider(),
+          const AboutListTile(
+            applicationName: Strings.arkivaIslame,
+            applicationVersion: "1.0.0",
+            applicationIcon: Icon(Icons.info_outline),
+            icon: Icon(Icons.article),
+            aboutBoxChildren: <Widget>[Text(Strings.aboutBox)],
+          ),
+          ListTile(
+            leading: Icon(Icons.info_outline),
+            title: const Text(Strings.developmentTeam),
+            onTap: () => _showInfoDialog(context),
+          ),
+        ],
+      ),
     );
   }
 }
