@@ -6,12 +6,6 @@ import 'package:radio_arkiva_islame/utils/url_utils.dart';
 class ActionItemListData {
   static const socialMediaItems = [
     ActionItem(
-      iconData: Icons.web,
-      text: "www.arkivaislame.com",
-      url: "https://arkivaislame.com/",
-      size: 28.0,
-    ),
-    ActionItem(
       iconData: FontAwesomeIcons.facebook,
       text: "Arkiva Islame",
       url: "https://www.facebook.com/arkivaislam",
@@ -37,11 +31,6 @@ class ActionItemListData {
       text: "Kosovë",
       url: "Kosovë",
       onTap: () => launchGoogleMapsSearch("Kosovë"),
-    ),
-    const ActionItem(
-      iconData: Icons.phone,
-      text: "+383 44 477 094",
-      url: "tel:+38344477094",
     ),
     const ActionItem(
       iconData: Icons.email,
