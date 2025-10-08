@@ -36,6 +36,7 @@ class AudioPlayerHandler extends BaseAudioHandler with SeekHandler {
     if (_hasInternet) {
       await _initializeAudioSource();
       await _fetchCurrentTitle();
+      await _player.play();
     } else {
       logDebug("DEBUG: No internet at initialization. Audio source not set.");
     }
