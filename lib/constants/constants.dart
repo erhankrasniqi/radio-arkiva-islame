@@ -4,7 +4,7 @@ class RadioStream {
 }
 
 class Youtube {
-  static const String yt = 'AIzaSyDxtzeWdKubvO9Cn6tpS5Ge3zld91JPzzU';
+  static const String yt = 'AIzaSyDiSnCrVMLj_vYs_W_RFvtSBd_345_88y0';
   static const String ytUrl = 'https://www.youtube.com/@arkivaislame1675';
   static const String channelId = 'UC2dFt_PrCZxw5oFxtGHOO8g';
 }
