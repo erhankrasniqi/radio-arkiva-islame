@@ -11,6 +11,7 @@ class ContactScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(title: const Text(Strings.contact), centerTitle: true),
       floatingActionButton: FloatingActionButton(
         key: const ValueKey('fab'),
         foregroundColor: Theme.of(context).colorScheme.onPrimary,

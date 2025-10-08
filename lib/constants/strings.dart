@@ -1,4 +1,6 @@
 class Strings {
+  static const int viberPhoneNumber = 38344477094;
+
   static const String developedBy = "Developed By";
   static const String developmentTeam = "Development Team";
   static const String contactUs = "Contact Us";
@@ -17,6 +19,7 @@ class Strings {
   static const String more = 'Më shumë';
   static const String radio = 'Radio';
   static const String youtube = 'Youtube';
+  static const String liveTv = 'Live TV';
   static const String contact = 'Kontakt';
   static const String writeUs = 'Na Shkruani';
   static const String connectWithUs = 'Lidhuni me ne';
@@ -30,6 +33,7 @@ class Strings {
   static const String email = 'Email';
   static const String message = 'Mesazhi';
   static const String sendMessage = 'Dërgoni mesazhin';
+  static const String hello = 'Përshëndetje!';
 
   static const String loading = 'Duke u mbushur..';
   static const String unknownTitle = 'Titull i panjohur';
@@ -43,6 +47,8 @@ class Strings {
   static const String noAds = 'Nuk u gjet asnjë reklamë';
   static const String noInternet = 'Nuk keni internet!';
   static const String tryAgain = 'Provo përsëri';
+
+  static const String liveTvComingSoon = 'Live TV do të vie së shpejti!';
 
   static const String description =
       "Faleminderit që jeni duke vizituar Radio Islame! Ne jemi gjithmonë të gatshëm për të dëgjuar nga ju dhe për të ofruar mbështetje.\n\nNëse keni ndonjë pyetje, sugjerim, ose nevojë për informacion shtesë, mund të na kontaktoni përmes formës më poshtë ose përmes informacionit të dhënë.";

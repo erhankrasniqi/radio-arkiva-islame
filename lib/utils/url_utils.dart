@@ -1,4 +1,8 @@
+import 'dart:io';
+import 'package:flutter/material.dart';
+import 'package:radio_arkiva_islame/constants/strings.dart';
 import 'package:radio_arkiva_islame/utils/debug_utils.dart';
+import 'package:radio_arkiva_islame/utils/fab_loader.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 Future<void> launchValidatedUrl(String urlString) async {
@@ -34,5 +38,35 @@ Future<void> launchGoogleMapsSearch(String query) async {
   );
   if (!await launchUrl(mapsUrl)) {
     throw 'Could not launch $mapsUrl';
+  }
+}
+
+Future<void> openViberChat(BuildContext context) async {
+  const phoneNumber = Strings.viberPhoneNumber;
+  const message = Strings.hello;
+
+  FabLoader.startLoading();
+
+  try {
+    final Uri? viberUri = Uri.tryParse(
+      'viber://chat/?number=+$phoneNumber&draft=$message',
+    );
+
+    if (!await launchUrl(viberUri!, mode: LaunchMode.externalApplication)) {
+      final Uri appStoreUri =
+          Platform.isIOS
+              ? Uri.parse('https://apps.apple.com/app/id382617920')
+              : Uri.parse(
+                'https://play.google.com/store/apps/details?id=com.viber.voip',
+              );
+
+      if (await canLaunchUrl(appStoreUri)) {
+        await launchUrl(appStoreUri, mode: LaunchMode.externalApplication);
+      } else {
+        logDebug('Could not open Viber or App Store/Play Store');
+      }
+    }
+  } catch (e) {
+    logDebug('Error launching Viber: $e');
   }
 }
