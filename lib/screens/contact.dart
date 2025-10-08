@@ -25,27 +25,23 @@ class ContactScreen extends StatelessWidget {
         child: const Icon(Icons.edit_outlined),
       ),
       body: SingleChildScrollView(
-        child: Padding(
-          padding: EdgeInsets.only(
-            left: 16.0,
-            right: 16.0,
-            top: 16.0,
-            bottom: MediaQuery.of(context).padding.bottom + 4.0,
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            spacing: 16,
-            children: [
-              const SectionHeader(
-                title: Strings.arkivaIslame,
-                showDescription: true,
-              ),
-              const SectionHeader(title: Strings.connectWithUs),
-              const ActionItemList(items: ActionItemListData.socialMediaItems),
-              const SectionHeader(title: Strings.writeUs),
-              ActionItemList(items: ActionItemListData.contactInfoItems),
-            ],
-          ),
+        padding: EdgeInsets.only(
+          top: 16.0,
+          bottom: MediaQuery.of(context).padding.bottom + 4.0,
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          spacing: 16,
+          children: [
+            const SectionHeader(
+              title: Strings.arkivaIslame,
+              showDescription: true,
+            ),
+            const SectionHeader(title: Strings.connectWithUs),
+            const ActionItemList(items: ActionItemListData.socialMediaItems),
+            const SectionHeader(title: Strings.writeUs),
+            ActionItemList(items: ActionItemListData.contactInfoItems),
+          ],
         ),
       ),
     );
@@ -78,7 +74,7 @@ class ActionItem extends StatelessWidget {
     return InkWell(
       onTap: onTap ?? () => launchValidatedUrl(url),
       child: Padding(
-        padding: const EdgeInsets.all(4.0),
+        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
         child: Row(
           children: [
             SizedBox(width: 28, height: 28, child: Center(child: iconWidget)),
@@ -126,26 +122,29 @@ class SectionHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      spacing: 8.0,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          title,
-          style: Theme.of(context).textTheme.headlineSmall!.copyWith(
-            color: Theme.of(context).colorScheme.primary,
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 16.0),
+      child: Column(
+        spacing: 8.0,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title,
+            style: Theme.of(context).textTheme.headlineSmall!.copyWith(
+              color: Theme.of(context).colorScheme.primary,
+            ),
           ),
-        ),
-        ClipRRect(
-          borderRadius: BorderRadius.circular(10),
-          child: Container(
-            width: 50,
-            height: 6,
-            color: const Color(0xFFF8B735),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(10),
+            child: Container(
+              width: 50,
+              height: 6,
+              color: const Color(0xFFF8B735),
+            ),
           ),
-        ),
-        if (showDescription) descriptionWidget ?? const DescriptionText(),
-      ],
+          if (showDescription) descriptionWidget ?? const DescriptionText(),
+        ],
+      ),
     );
   }
 }
