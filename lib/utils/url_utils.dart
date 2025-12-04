@@ -44,21 +44,28 @@ Future<void> openViberChat() async {
   const phoneNumber = Strings.viberPhoneNumber;
   const message = Strings.hello;
 
+  FabLoader.startLoading();
+
   try {
     final Uri viberUri = Uri.parse(
       'viber://chat/?number=+$phoneNumber&draft=$message',
     );
 
-    final bool viberOpened =
-        await launchUrl(viberUri, mode: LaunchMode.externalApplication);
+    final bool viberOpened = await launchUrl(
+      viberUri,
+      mode: LaunchMode.externalApplication,
+    );
 
     if (!viberOpened) {
-      final Uri storeUri = Platform.isIOS
-          ? Uri.parse('itms-apps://itunes.apple.com/app/id382617920')
-          : Uri.parse('market://details?id=com.viber.voip');
+      final Uri storeUri =
+          Platform.isIOS
+              ? Uri.parse('itms-apps://itunes.apple.com/app/id382617920')
+              : Uri.parse('market://details?id=com.viber.voip');
 
-      final bool storeOpened =
-          await launchUrl(storeUri, mode: LaunchMode.externalApplication);
+      final bool storeOpened = await launchUrl(
+        storeUri,
+        mode: LaunchMode.externalApplication,
+      );
 
       if (!storeOpened) {
         logDebug('Could not open Viber or the App Store / Play Store');
