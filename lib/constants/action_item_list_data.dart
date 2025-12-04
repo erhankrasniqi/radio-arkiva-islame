@@ -38,5 +38,12 @@ class ActionItemListData {
       url:
           "mailto:contact@arkivaislame.com?subject=Pyetje rreth shërbimeve tuaja",
     ),
+    ActionItem(
+      iconData: FontAwesomeIcons.viber,
+      text: "+383 44 477 094",
+      url: "+383 44 477 094",
+      useFaIcon: true,
+      onTap: () => openViberChat(),
+    ),
   ];
 }
