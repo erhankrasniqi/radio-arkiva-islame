@@ -44,30 +44,27 @@ Future<void> openViberChat() async {
   const phoneNumber = Strings.viberPhoneNumber;
   const message = Strings.hello;
 
-  FabLoader.startLoading();
-
   try {
-    final Uri? viberUri = Uri.tryParse(
+    final Uri viberUri = Uri.parse(
       'viber://chat/?number=+$phoneNumber&draft=$message',
     );
 
-    if (!await launchUrl(viberUri!, mode: LaunchMode.externalApplication)) {
-      final Uri appStoreUri =
-          Platform.isIOS
-              ? Uri.parse('itms-apps://itunes.apple.com/app/id382617920')
-              : Uri.parse(
-                'https://play.google.com/store/apps/details?id=com.viber.voip',
-              );
+    final bool viberOpened =
+        await launchUrl(viberUri, mode: LaunchMode.externalApplication);
 
-      if (await canLaunchUrl(appStoreUri)) {
-        await launchUrl(appStoreUri, mode: LaunchMode.externalApplication);
-      } else {
-        logDebug('Could not open Viber or App Store/Play Store');
+    if (!viberOpened) {
+      final Uri storeUri = Platform.isIOS
+          ? Uri.parse('itms-apps://itunes.apple.com/app/id382617920')
+          : Uri.parse('market://details?id=com.viber.voip');
+
+      final bool storeOpened =
+          await launchUrl(storeUri, mode: LaunchMode.externalApplication);
+
+      if (!storeOpened) {
+        logDebug('Could not open Viber or the App Store / Play Store');
       }
     }
   } catch (e) {
     logDebug('Error launching Viber: $e');
-  } finally {
-    FabLoader.stopLoading();
   }
 }
