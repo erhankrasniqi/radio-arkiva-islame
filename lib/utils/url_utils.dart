@@ -41,7 +41,7 @@ Future<void> launchGoogleMapsSearch(String query) async {
   }
 }
 
-Future<void> openViberChat(BuildContext context) async {
+Future<void> openViberChat() async {
   const phoneNumber = Strings.viberPhoneNumber;
   const message = Strings.hello;
 

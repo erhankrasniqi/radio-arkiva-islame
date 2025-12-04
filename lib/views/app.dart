@@ -45,7 +45,7 @@ class AppContent extends StatelessWidget {
           valueListenable: FabLoader.isLoading,
           builder: (context, isLoading, child) {
             return FloatingActionButton(
-              onPressed: isLoading ? null : () => openViberChat(context),
+              onPressed: isLoading ? null : () => openViberChat(),
               shape: const CircleBorder(),
               backgroundColor: Theme.of(context).colorScheme.tertiary,
               foregroundColor: Theme.of(context).colorScheme.onTertiary,
