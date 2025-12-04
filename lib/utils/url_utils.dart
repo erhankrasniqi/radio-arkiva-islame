@@ -55,7 +55,7 @@ Future<void> openViberChat(BuildContext context) async {
     if (!await launchUrl(viberUri!, mode: LaunchMode.externalApplication)) {
       final Uri appStoreUri =
           Platform.isIOS
-              ? Uri.parse('https://apps.apple.com/app/id382617920')
+              ? Uri.parse('itms-apps://itunes.apple.com/app/id382617920')
               : Uri.parse(
                 'https://play.google.com/store/apps/details?id=com.viber.voip',
               );
@@ -68,5 +68,7 @@ Future<void> openViberChat(BuildContext context) async {
     }
   } catch (e) {
     logDebug('Error launching Viber: $e');
+  } finally {
+    FabLoader.stopLoading();
   }
 }
