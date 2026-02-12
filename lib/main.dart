@@ -9,6 +9,7 @@ import 'package:radio_arkiva_islame/services/audio_handler.dart';
 import 'package:radio_arkiva_islame/services/firebase_options.dart';
 import 'package:radio_arkiva_islame/providers/youtube_provider.dart';
 import 'package:radio_arkiva_islame/providers/theme_provider.dart';
+import 'package:radio_arkiva_islame/providers/media_controller_provider.dart';
 import 'package:radio_arkiva_islame/utils/lifecycle_observer.dart';
 import 'package:radio_arkiva_islame/views/app.dart';
 import 'package:provider/provider.dart';
@@ -51,6 +52,7 @@ Future<void> main() async {
         ChangeNotifierProvider(
           create: (context) => YoutubeProvider()..fetchVideos(),
         ),
+        ChangeNotifierProvider(create: (context) => MediaControllerProvider()),
       ],
       child: const MyApp(),
     ),

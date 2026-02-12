@@ -13,6 +13,7 @@ import 'package:radio_arkiva_islame/screens/settings.dart';
 import 'package:radio_arkiva_islame/screens/youtube.dart';
 import 'package:radio_arkiva_islame/utils/fab_loader.dart';
 import 'package:radio_arkiva_islame/utils/url_utils.dart';
+import 'package:radio_arkiva_islame/providers/media_controller_provider.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -32,15 +33,49 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class AppContent extends StatelessWidget {
+class AppContent extends StatefulWidget {
   const AppContent({super.key});
 
   @override
+  State<AppContent> createState() => _AppContentState();
+}
+
+class _AppContentState extends State<AppContent> with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 3, vsync: this, initialIndex: 0);
+    _tabController.addListener(_handleTabChange);
+  }
+
+  void _handleTabChange() {
+    if (!_tabController.indexIsChanging) {
+      final mediaController = Provider.of<MediaControllerProvider>(context, listen: false);
+      if (_tabController.index == 0) {
+        // Radio tab
+        mediaController.setActiveSource(MediaSource.radio);
+      } else if (_tabController.index == 2) {
+        // TV Live tab
+        mediaController.setActiveSource(MediaSource.tv);
+      } else {
+        // YouTube tab
+        mediaController.setActiveSource(MediaSource.none);
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    _tabController.removeListener(_handleTabChange);
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-      initialIndex: 0,
-      length: 3,
-      child: Scaffold(
+    return Scaffold(
         floatingActionButton: ValueListenableBuilder<bool>(
           valueListenable: FabLoader.isLoading,
           builder: (context, isLoading, child) {
@@ -92,6 +127,7 @@ class AppContent extends StatelessWidget {
             ),
           ],
           bottom: TabBar(
+            controller: _tabController,
             tabs: [
               Tab(text: Strings.radio, icon: Icon(Icons.radio_outlined)),
               Tab(
@@ -103,9 +139,9 @@ class AppContent extends StatelessWidget {
           ),
         ),
         body: TabBarView(
+          controller: _tabController,
           children: [RadioScreen(), YoutubeScreen(), LiveTvScreen()],
         ),
-      ),
-    );
+      );
   }
 }

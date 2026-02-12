@@ -34,9 +34,9 @@ class ActionItemListData {
     ),
     const ActionItem(
       iconData: Icons.email,
-      text: "contact@arkivaislame.com",
+      text: "arkivaislame@hotmail.com",
       url:
-          "mailto:contact@arkivaislame.com?subject=Pyetje rreth shërbimeve tuaja",
+          "mailto:arkivaislame@hotmail.com?subject=Pyetje rreth shërbimeve tuaja",
     ),
     ActionItem(
       iconData: FontAwesomeIcons.viber,

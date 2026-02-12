@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:audio_service/audio_service.dart';
 import 'package:radio_arkiva_islame/services/radio_service.dart';
+import 'package:radio_arkiva_islame/providers/media_controller_provider.dart';
 
 class PlayButtonWidget extends StatelessWidget {
   const PlayButtonWidget({super.key});
@@ -8,6 +10,7 @@ class PlayButtonWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final radioService = RadioService();
+    final mediaController = Provider.of<MediaControllerProvider>(context, listen: false);
     return SizedBox(
       width: double.infinity,
       child: StreamBuilder<PlaybackState>(
@@ -41,6 +44,7 @@ class PlayButtonWidget extends StatelessWidget {
               if (state != null && state.playing) {
                 radioService.pause();
               } else {
+                mediaController.setActiveSource(MediaSource.radio);
                 radioService.play();
               }
             },
